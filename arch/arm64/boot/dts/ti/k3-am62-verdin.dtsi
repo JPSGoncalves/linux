@@ -68,6 +68,8 @@
 			debounce-interval = <10>;
 			/* Verdin CTRL_WAKE1_MICO# (SODIMM 252) */
 			gpios = <&main_gpio0 32 GPIO_ACTIVE_LOW>;
+			interrupt-names = "wakeup";
+			interrupts-extended = <&main_pmx0 0x0084>;
 			label = "Wake-Up";
 			linux,code = <KEY_WAKEUP>;
 			wakeup-source;

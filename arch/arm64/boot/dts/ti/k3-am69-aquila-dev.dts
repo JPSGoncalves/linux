@@ -1,0 +1,43 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/*
+ * Copyright 2024 Toradex
+ *
+ * Device tree for Toradex Aquila AM69 SoM on Aquila development carrier board
+ *
+ * https://www.toradex.com/computer-on-modules/aquila-arm-family/ti-am69
+ * https://www.toradex.com/products/carrier-board/aquila-development-board-kit
+ */
+
+/dts-v1/;
+
+#include "k3-j784s4.dtsi"
+#include "k3-am69-aquila.dtsi"
+
+/ {
+	model = "Toradex Aquila AM69 on Aquila Development Board";
+	compatible = "toradex,aquila-am69-dev",
+		     "toradex,aquila-am69",
+		     "ti,j784s4";
+};
+
+/* Aquila UART_1 */
+&main_uart1 {
+	status = "okay";
+};
+
+/* Aquila UART_3, used as the Linux console */
+&main_uart8 {
+	status = "okay";
+};
+
+/* Aquila UART_4 */
+&mcu_uart0 {
+	status = "okay";
+};
+
+/* Aquila UART_2, through RS485 transceiver */
+&wkup_uart0 {
+	linux,rs485-enabled-at-boot-time;
+	rs485-rx-during-tx;
+	status = "reserved"; /* TODO: set to 'okay' after bring-up */
+};

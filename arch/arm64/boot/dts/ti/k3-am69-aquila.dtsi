@@ -1,0 +1,131 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/*
+ * Copyright 2024 Toradex
+ *
+ * Common dtsi for Toradex Aquila AM69 SoM
+ *
+ * https://www.toradex.com/computer-on-modules/aquila-arm-family/ti-am69
+ */
+
+#include <dt-bindings/net/ti-dp83867.h>
+#include <dt-bindings/gpio/gpio.h>
+#include "k3-j784s4.dtsi"
+
+/ {
+	chosen {
+		stdout-path = "serial2:115200n8";
+	};
+
+	aliases {
+		mmc0 = &main_sdhci0;
+		serial0 = &wkup_uart0;
+		serial1 = &mcu_uart0;
+		serial2 = &main_uart8;
+		serial3 = &main_uart1;
+	};
+
+	memory@80000000 {
+		device_type = "memory";
+		/* 32G RAM */
+		reg = <0x00 0x80000000 0x00 0x80000000>,
+		      <0x08 0x80000000 0x07 0x80000000>;
+	};
+
+	reserved_memory: reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		/* global cma region */
+		linux,cma {
+			compatible = "shared-dma-pool";
+			reusable;
+			size = <0x00 0x70000000>;
+			linux,cma-default;
+		};
+
+		secure_ddr: optee@9e800000 {
+			reg = <0x00 0x9e800000 0x00 0x01800000>;
+			no-map;
+		};
+	};
+};
+
+&main_pmx0 {
+	/* Aquila UART_1 */
+	pinctrl_main_uart1: main-uart1-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x05c, PIN_INPUT, 11)  /* (AC36) MCASP2_AXR0.UART1_CTSn */ /* AQUILA B37 */
+			J784S4_IOPAD(0x060, PIN_OUTPUT, 11) /* (AE36) MCASP2_AXR1.UART1_RTSn */ /* AQUILA B36 */
+			J784S4_IOPAD(0x054, PIN_INPUT, 11)  /* (AD37) MCASP2_ACLKX.UART1_RXD */ /* AQUILA B34 */
+			J784S4_IOPAD(0x058, PIN_OUTPUT, 11) /* (AE37) MCASP2_AFSX.UART1_TXD  */ /* AQUILA B35 */
+		>;
+	};
+
+	/* Aquila UART_3, used as the Linux console */
+	pinctrl_main_uart8: main-uart8-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x038, PIN_INPUT, 11)  /* (AK35) MCASP0_ACLKX.UART8_RXD */ /* AQUILA D22 */
+			J784S4_IOPAD(0x03c, PIN_OUTPUT, 11) /* (AK38) MCASP0_AFSX.UART8_TXD  */ /* AQUILA D23 */
+		>;
+	};
+};
+
+&wkup_pmx1 {
+	/* Aquila UART_4 */
+	pinctrl_mcu_uart0: mcu-uart0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x018, PIN_INPUT, 4)  /* (D31) MCU_OSPI1_D1.MCU_UART0_RXD */ /* AQUILA D24 */
+			J784S4_WKUP_IOPAD(0x01c, PIN_OUTPUT, 4) /* (G31) MCU_OSPI1_D2.MCU_UART0_TXD */ /* AQUILA D25 */
+		>;
+	};
+};
+
+&wkup_pmx2 {
+	/* Aquila UART_2 */
+	pinctrl_wkup_uart0: wkup-uart0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x070, PIN_INPUT, 0)  /* (L37) WKUP_GPIO0_6.WKUP_UART0_CTSn */ /* AQUILA L37 */
+			J784S4_WKUP_IOPAD(0x074, PIN_OUTPUT, 0) /* (L36) WKUP_GPIO0_7.WKUP_UART0_RTSn */ /* AQUILA L36 */
+			J784S4_WKUP_IOPAD(0x048, PIN_INPUT, 0)  /* (K35) WKUP_UART0_RXD               */ /* AQUILA K35 */
+			J784S4_WKUP_IOPAD(0x04c, PIN_OUTPUT, 0) /* (K34) WKUP_UART0_TXD               */ /* AQUILA K34 */
+		>;
+	};
+};
+
+/* On-module eMMC */
+&main_sdhci0 {
+	disable-wp;
+	no-mmc-hs400; /* TODO: verify the actual status, copied from TI SK AM69 */
+	non-removable;
+	ti,driver-strength-ohm = <50>;
+	status = "okay";
+};
+
+/* Aquila UART_1 */
+&main_uart1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_uart1>;
+	status = "disabled";
+};
+
+/* Aquila UART_3, used as the Linux console */
+&main_uart8 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_uart8>;
+	status = "disabled";
+};
+
+/* Aquila UART_4 */
+&mcu_uart0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_mcu_uart0>;
+	status = "disabled";
+};
+
+/* Aquila UART_2 */
+&wkup_uart0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_wkup_uart0>;
+	status = "disabled";
+};

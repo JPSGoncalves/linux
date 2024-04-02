@@ -20,6 +20,71 @@
 		     "ti,j784s4";
 };
 
+/* Aquila PWM_1 */
+&main_ehrpwm0 {
+	status = "okay";
+};
+
+/* Aquila PWM_4_DP */
+&main_ehrpwm2 {
+	status = "okay";
+};
+
+/* Aquila PWM_2 */
+&main_ehrpwm3 {
+	status = "okay";
+};
+
+/* Aquila PWM_3_DSI */
+&main_ehrpwm5 {
+	status = "okay";
+};
+
+/* Aquila I2C_3_DSI1 */
+&main_i2c0 {
+	status = "okay";
+};
+
+/* Aquila I2C_4_CSI1 */
+&main_i2c1 {
+	status = "okay";
+};
+
+/* Aquila I2C_5_CSI2 */
+&main_i2c2 {
+	status = "okay";
+};
+
+/* Aquila I2C_6 */
+&main_i2c5 {
+	status = "okay";
+};
+
+/* Aquila CAN_1 */
+&main_mcan10 {
+	status = "okay";
+};
+
+/* Aquila CAN_3 */
+&main_mcan13 {
+	status = "okay";
+};
+
+/* Aquila SD_1 */
+&main_sdhci1 {
+	status = "okay";
+};
+
+/* Aquila SPI_2 */
+&main_spi0 {
+	status = "okay";
+};
+
+/* Aquila SPI_1 */
+&main_spi2 {
+	status = "okay";
+};
+
 /* Aquila UART_1 */
 &main_uart1 {
 	status = "okay";
@@ -30,8 +95,33 @@
 	status = "okay";
 };
 
+/* Aquila I2C_1 */
+&mcu_i2c0 {
+	status = "okay";
+};
+
+/* Aquila I2C_2 */
+&mcu_i2c1 {
+	status = "okay";
+};
+
+/* Aquila CAN_2 */
+&mcu_mcan0 {
+	status = "okay";
+};
+
+/* Aquila CAN_4 */
+&mcu_mcan1 {
+	status = "okay";
+};
+
 /* Aquila UART_4 */
 &mcu_uart0 {
+	status = "okay";
+};
+
+/* Aquila ADC_[1-4] */
+&tscadc0 {
 	status = "okay";
 };
 

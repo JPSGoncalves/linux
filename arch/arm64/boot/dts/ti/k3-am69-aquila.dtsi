@@ -17,11 +17,24 @@
 	};
 
 	aliases {
+		can0 = &main_mcan10;
+		can1 = &mcu_mcan0;
+		can2 = &main_mcan13;
+		can3 = &mcu_mcan1;
+		i2c0 = &wkup_i2c0;
+		i2c1 = &mcu_i2c0;
+		i2c2 = &mcu_i2c1;
+		i2c3 = &main_i2c0;
+		i2c4 = &main_i2c1;
+		i2c5 = &main_i2c2;
+		i2c6 = &main_i2c5;
 		mmc0 = &main_sdhci0;
-		serial0 = &wkup_uart0;
-		serial1 = &mcu_uart0;
+		mmc1 = &main_sdhci1;
+		rtc0 = &rtc_i2c;
+		serial0 = &main_uart1;
+		serial1 = &wkup_uart0;
 		serial2 = &main_uart8;
-		serial3 = &main_uart1;
+		serial3 = &mcu_uart0;
 	};
 
 	memory@80000000 {
@@ -48,10 +61,302 @@
 			reg = <0x00 0x9e800000 0x00 0x01800000>;
 			no-map;
 		};
+
+		mcu_r5fss0_core0_dma_memory_region: r5f-dma-memory@a0000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa0000000 0x00 0x100000>;
+			no-map;
+		};
+
+		mcu_r5fss0_core0_memory_region: r5f-memory@a0100000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa0100000 0x00 0xf00000>;
+			no-map;
+		};
+
+		mcu_r5fss0_core1_dma_memory_region: r5f-dma-memory@a1000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa1000000 0x00 0x100000>;
+			no-map;
+		};
+
+		mcu_r5fss0_core1_memory_region: r5f-memory@a1100000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa1100000 0x00 0xf00000>;
+			no-map;
+		};
+
+		main_r5fss0_core0_dma_memory_region: r5f-dma-memory@a2000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa2000000 0x00 0x100000>;
+			no-map;
+		};
+
+		main_r5fss0_core0_memory_region: r5f-memory@a2100000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa2100000 0x00 0xf00000>;
+			no-map;
+		};
+
+		main_r5fss0_core1_dma_memory_region: r5f-dma-memory@a3000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa3000000 0x00 0x100000>;
+			no-map;
+		};
+
+		main_r5fss0_core1_memory_region: r5f-memory@a3100000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa3100000 0x00 0xf00000>;
+			no-map;
+		};
+
+		main_r5fss1_core0_dma_memory_region: r5f-dma-memory@a4000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa4000000 0x00 0x100000>;
+			no-map;
+		};
+
+		main_r5fss1_core0_memory_region: r5f-memory@a4100000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa4100000 0x00 0xf00000>;
+			no-map;
+		};
+
+		main_r5fss1_core1_dma_memory_region: r5f-dma-memory@a5000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa5000000 0x00 0x100000>;
+			no-map;
+		};
+
+		main_r5fss1_core1_memory_region: r5f-memory@a5100000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa5100000 0x00 0xf00000>;
+			no-map;
+		};
+
+		main_r5fss2_core0_dma_memory_region: r5f-dma-memory@a6000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa6000000 0x00 0x100000>;
+			no-map;
+		};
+
+		main_r5fss2_core0_memory_region: r5f-memory@a6100000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa6100000 0x00 0xf00000>;
+			no-map;
+		};
+
+		main_r5fss2_core1_dma_memory_region: r5f-dma-memory@a7000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa7000000 0x00 0x100000>;
+			no-map;
+		};
+
+		main_r5fss2_core1_memory_region: r5f-memory@a7100000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa7100000 0x00 0xf00000>;
+			no-map;
+		};
+
+		c71_0_dma_memory_region: c71-dma-memory@a8000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa8000000 0x00 0x100000>;
+			no-map;
+		};
+
+		c71_0_memory_region: c71-memory@a8100000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa8100000 0x00 0xf00000>;
+			no-map;
+		};
+
+		c71_1_dma_memory_region: c71-dma-memory@a9000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa9000000 0x00 0x100000>;
+			no-map;
+		};
+
+		c71_1_memory_region: c71-memory@a9100000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xa9100000 0x00 0xf00000>;
+			no-map;
+		};
+
+		c71_2_dma_memory_region: c71-dma-memory@aa000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xaa000000 0x00 0x100000>;
+			no-map;
+		};
+
+		c71_2_memory_region: c71-memory@aa100000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xaa100000 0x00 0xf00000>;
+			no-map;
+		};
+
+		c71_3_dma_memory_region: c71-dma-memory@ab000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xab000000 0x00 0x100000>;
+			no-map;
+		};
+
+		c71_3_memory_region: c71-memory@ab100000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xab100000 0x00 0xf00000>;
+			no-map;
+		};
+	};
+
+	/* Aquila SD_1_PWR_EN */
+	reg_sdhc1_vmmc: regulator-sdhci1 {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_sd1_pwr_en>;
+		enable-active-high;
+		/* Aquila SD_1_PWR_EN (AQUILA A5) */
+		gpio = <&main_gpio0 52 GPIO_ACTIVE_HIGH>;
+		off-on-delay-us = <100000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-min-microvolt = <3300000>;
+		regulator-name = "+3V3_SD";
+		startup-delay-us = <5000>;
+	};
+
+	reg_sdhc1_vqmmc: regulator-sdhci1-vqmmc {
+		compatible = "regulator-gpio";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_sdio_pwr_sel>;
+		/* SDIO_PWR_SEL_3.3V */
+		gpios = <&wkup_gpio0 66 GPIO_ACTIVE_HIGH>;
+		regulator-name = "+VDD_SD_DV";
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <3300000>;
+		states = <1800000 0x0>,
+			 <3300000 0x1>;
 	};
 };
 
 &main_pmx0 {
+	/* Aquila PWM_1 */
+	pinctrl_main_ehrpwm0_b: main-ehrpwm0b-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x064, PIN_OUTPUT, 9) /* (AF38) MCAN0_TX.EHRPWM0_B */ /* AQUILA B59 */
+		>;
+	};
+
+	/* Aquila PWM_2 */
+	pinctrl_main_ehrpwm3_a: main-ehrpwm3a-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x08c, PIN_OUTPUT, 9) /* (AE35) MCASP0_AXR7.EHRPWM3_A */ /* AQUILA B60 */
+		>;
+	};
+
+	/* Aquila PWM_3_DSI */
+	pinctrl_main_ehrpwm5_a: main-ehrpwm5a-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x084, PIN_OUTPUT, 9) /* (AG38) MCASP0_AXR5.EHRPWM5_A */ /* AQUILA B45 */
+		>;
+	};
+
+	/* Aquila PWM_4_DP */
+	pinctrl_main_ehrpwm2_a: main-ehrpwm2a-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x040, PIN_INPUT, 9) /* (AF37) MCASP0_AXR0.EHRPWM2_A */ /* AQUILA B57 */
+		>;
+	};
+
+	/* Aquila I2C_3_DSI1 */
+	pinctrl_main_i2c0: main-i2c0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x0e0, PIN_INPUT, 0) /* (AN36) I2C0_SCL */ /* AQUILA B40 */
+			J784S4_IOPAD(0x0e4, PIN_INPUT, 0) /* (AP37) I2C0_SDA */ /* AQUILA B39 */
+			>;
+	};
+
+	/* Aquila I2C_4_CSI1 */
+	pinctrl_main_i2c1: main-i2c1-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x020, PIN_INPUT, 12) /* (AJ35) MCAN15_RX.I2C1_SCL */ /* AQUILA A14 */
+			J784S4_IOPAD(0x024, PIN_INPUT, 12) /* (AH34) MCAN16_TX.I2C1_SDA */ /* AQUILA A13 */
+			>;
+	};
+
+	/* Aquila I2C_5_CSI2 */
+	pinctrl_main_i2c2: main-i2c2-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x04c, PIN_INPUT, 13) /* (AC32) MCASP1_AXR1.I2C2_SCL */ /* AQUILA C6 */
+			J784S4_IOPAD(0x050, PIN_INPUT, 13) /* (AC37) MCASP1_AXR2.I2C2_SDA */ /* AQUILA C5 */
+			>;
+	};
+
+	/* Aquila I2C_6 */
+	pinctrl_main_i2c5: main-i2c5-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x01c, PIN_INPUT, 8) /* (AG34) MCAN15_TX.I2C5_SCL */ /* AQUILA D11 */
+			J784S4_IOPAD(0x018, PIN_INPUT, 8) /* (AK36) MCAN14_RX.I2C5_SDA */ /* AQUILA D10 */
+			>;
+	};
+
+	/* Aquila CAN_1 */
+	pinctrl_main_mcan10: main-mcan10-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x0b8, PIN_INPUT, 0)  /* (AC34) MCASP1_ACLKX.MCAN10_RX */ /* AQUILA B48 */
+			J784S4_IOPAD(0x0b4, PIN_OUTPUT, 0) /* (AL34) MCASP1_AXR4.MCAN10_TX  */ /* AQUILA B47 */
+		>;
+	};
+
+	/* Aquila CAN_3 */
+	pinctrl_main_mcan13: main-mcan13-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x010, PIN_INPUT, 0)  /* (AH33) MCAN13_RX */ /* AQUILA B53 */
+			J784S4_IOPAD(0x00c, PIN_OUTPUT, 0) /* (AF33) MCAN13_TX */ /* AQUILA B52 */
+		>;
+	};
+
+	/* Aquila SD_1 */
+	pinctrl_main_mmc1: main-mmc1-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x104, PIN_INPUT, 0) /* (AB38) MMC1_CLK  */ /* AQUILA A6 */
+			J784S4_IOPAD(0x108, PIN_INPUT, 0) /* (AB36) MMC1_CMD  */ /* AQUILA A4 */
+			J784S4_IOPAD(0x0fc, PIN_INPUT, 0) /* (AA33) MMC1_DAT0 */ /* AQUILA A8 */
+			J784S4_IOPAD(0x0f8, PIN_INPUT, 0) /* (AB34) MMC1_DAT1 */ /* AQUILA A9 */
+			J784S4_IOPAD(0x0f4, PIN_INPUT, 0) /* (AA32) MMC1_DAT2 */ /* AQUILA A1 */
+			J784S4_IOPAD(0x0f0, PIN_INPUT, 0) /* (AC38) MMC1_DAT3 */ /* AQUILA A3 */
+		>;
+	};
+
+	/* Aquila SPI_2 */
+	pinctrl_main_spi0: main-spi0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x0d4, PIN_OUTPUT, 0) /* (AN38) SPI0_CLK */ /* AQUILA D17 */
+			J784S4_IOPAD(0x0d8, PIN_INPUT, 0)  /* (AM35) SPI0_D0  */ /* AQUILA D18 */
+			J784S4_IOPAD(0x0dc, PIN_OUTPUT, 0) /* (AM36) SPI0_D1  */ /* AQUILA D20 */
+		>;
+	};
+
+	/* Aquila SPI_2 CS */
+	pinctrl_main_spi0_cs0: main-spi0-cs0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x0cc, PIN_OUTPUT, 0) /* (AM37) SPI0_CS0 */ /* AQUILA D19 */
+		>;
+	};
+
+	/* Aquila SPI_1 */
+	pinctrl_main_spi2: main-spi2-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x0a0, PIN_OUTPUT, 10) /* (AD34) MCASP0_AXR12.SPI2_CLK */ /* AQUILA D15 */
+			J784S4_IOPAD(0x0a8, PIN_INPUT, 10)  /* (AF34) MCASP0_AXR14.SPI2_D0  */ /* AQUILA D13 */
+			J784S4_IOPAD(0x0ac, PIN_OUTPUT, 10) /* (AE34) MCASP0_AXR15.SPI2_D1  */ /* AQUILA D14 */
+			>;
+	};
+
+	/* Aquila SPI_1 CS */
+	pinctrl_main_spi2_cs0: main-spi2-cs0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x09c, PIN_OUTPUT, 10) /* (AF35) MCASP0_AXR11.SPI2_CS1 */ /* AQUILA D12 */
+		>;
+	};
+
 	/* Aquila UART_1 */
 	pinctrl_main_uart1: main-uart1-default-pins {
 		pinctrl-single,pins = <
@@ -69,6 +374,20 @@
 			J784S4_IOPAD(0x03c, PIN_OUTPUT, 11) /* (AK38) MCASP0_AFSX.UART8_TXD  */ /* AQUILA D23 */
 		>;
 	};
+
+	/* Aquila SD_1_CD# as GPIO */
+	pinctrl_sd1_cd_gpio: main-gpio0-58-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x0e8, PIN_INPUT_PULLUP, 7) /* (AR38) TIMER_IO0.GPIO0_58 */ /* AQUILA A10 */
+		>;
+	};
+
+	/* Aquila SD_1_PWR_EN */
+	pinctrl_sd1_pwr_en: main-gpio0-52-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x0d0, PIN_INPUT, 7) /* (AP38) SPI0_CS1.GPIO0_52 */ /* AQUILA A5 */
+		>;
+	};
 };
 
 &wkup_pmx1 {
@@ -82,6 +401,80 @@
 };
 
 &wkup_pmx2 {
+	/* Aquila ADC_[1-4] */
+	pinctrl_mcu_adc0: mcu-adc0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x0cc, PIN_OUTPUT, 0) /* (P36) MCU_ADC0_AIN0 */ /* AQUILA D1 */
+			J784S4_WKUP_IOPAD(0x0d0, PIN_OUTPUT, 0) /* (V36) MCU_ADC0_AIN1 */ /* AQUILA D2 */
+			J784S4_WKUP_IOPAD(0x0d4, PIN_OUTPUT, 0) /* (T34) MCU_ADC0_AIN2 */ /* AQUILA D3 */
+			J784S4_WKUP_IOPAD(0x0d8, PIN_OUTPUT, 0) /* (T36) MCU_ADC0_AIN3 */ /* AQUILA D4 */
+		>;
+	};
+
+	/* Aquila I2C_1 */
+	pinctrl_mcu_i2c0: mcu-i2c0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x0a0, PIN_INPUT, 0) /* (M35) MCU_I2C0_SCL */ /* AQUILA B63 */
+			J784S4_WKUP_IOPAD(0x0a4, PIN_INPUT, 0) /* (G34) MCU_I2C0_SDA */ /* AQUILA B62 */
+		>;
+	};
+
+	/* Aquila I2C_2 */
+	pinctrl_mcu_i2c1: mcu-i2c1-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x078, PIN_INPUT, 0) /* (L35) WKUP_GPIO0_8.MCU_I2C1_SCL */ /* AQUILA D9 */
+			J784S4_WKUP_IOPAD(0x07c, PIN_INPUT, 0) /* (L34) WKUP_GPIO0_9.MCU_I2C1_SDA */ /* AQUILA D8 */
+		>;
+	};
+
+	/* Aquila CAN_2 */
+	pinctrl_mcu_mcan0: mcu-mcan0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x054, PIN_INPUT, 0)  /* (F38) MCU_MCAN0_RX  */ /* AQUILA B50 */
+			J784S4_WKUP_IOPAD(0x050, PIN_OUTPUT, 0) /* (K33) MCU_MCAN0_TX  */ /* AQUILA B49 */
+		>;
+	};
+
+	/* Aquila CAN_4 */
+	pinctrl_mcu_mcan1: mcu-mcan1-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x06c, PIN_INPUT, 0)  /* (K36) WKUP_GPIO0_5.MCU_MCAN1_RX */ /* AQUILA B55 */
+			J784S4_WKUP_IOPAD(0x068, PIN_OUTPUT, 0) /* (H35) WKUP_GPIO0_4.MCU_MCAN1_TX */ /* AQUILA B54 */
+		>;
+	};
+
+	/* On-module SPI (TPM_SPI) */
+	pinctrl_mcu_spi0: mcu-spi0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x038, PIN_OUTPUT, 0) /* (G38) MCU_SPI0_CLK */
+			J784S4_WKUP_IOPAD(0x044, PIN_OUTPUT, 0) /* (F37) MCU_SPI0_CS0 */
+			J784S4_WKUP_IOPAD(0x03c, PIN_INPUT, 0)  /* (H36) MCU_SPI0_D0  */
+			J784S4_WKUP_IOPAD(0x040, PIN_OUTPUT, 0) /* (J38) MCU_SPI0_D1  */
+		>;
+	};
+
+	/* SDIO_PWR_SEL_3.3V */
+	pinctrl_sdio_pwr_sel: wkup-gpio0-66-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x118, PIN_INPUT, 7) /* (N34) WKUP_GPIO0_66 */
+		>;
+	};
+
+	/* On-module TPM IRQ# */
+	pinctrl_tpm_irq: wkup-gpio0-86-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x108, PIN_INPUT, 7) /* (Y36) MCU_ADC1_AIN7.WKUP_GPIO0_86 */
+		>;
+	};
+
+	/* On-module I2C - WKUP_I2C0 */
+	pinctrl_wkup_i2c0: wkup-i2c0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x098, PIN_INPUT, 0) /* (N33) WKUP_I2C0_SCL */
+			J784S4_WKUP_IOPAD(0x09c, PIN_INPUT, 0) /* (N35) WKUP_I2C0_SDA */
+		>;
+	};
+
 	/* Aquila UART_2 */
 	pinctrl_wkup_uart0: wkup-uart0-default-pins {
 		pinctrl-single,pins = <
@@ -93,6 +486,303 @@
 	};
 };
 
+&c71_0 {
+	mboxes = <&mailbox0_cluster4 &mbox_c71_0>;
+	memory-region = <&c71_0_dma_memory_region>,
+			<&c71_0_memory_region>;
+	status = "okay";
+};
+
+&c71_1 {
+	mboxes = <&mailbox0_cluster4 &mbox_c71_1>;
+	memory-region = <&c71_1_dma_memory_region>,
+			<&c71_1_memory_region>;
+	status = "okay";
+};
+
+&c71_2 {
+	mboxes = <&mailbox0_cluster5 &mbox_c71_2>;
+	memory-region = <&c71_2_dma_memory_region>,
+			<&c71_2_memory_region>;
+	status = "okay";
+};
+
+&c71_3 {
+	mboxes = <&mailbox0_cluster5 &mbox_c71_3>;
+	memory-region = <&c71_3_dma_memory_region>,
+			<&c71_3_memory_region>;
+	status = "okay";
+};
+
+/* Aquila PWM_1 */
+&main_ehrpwm0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_ehrpwm0_b>;
+	status = "disabled";
+};
+
+/* Aquila PWM_4_DP */
+&main_ehrpwm2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_ehrpwm2_a>;
+	status = "disabled";
+};
+
+/* Aquila PWM_2 */
+&main_ehrpwm3 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_ehrpwm3_a>;
+	status = "disabled";
+};
+
+/* Aquila PWM_3_DSI */
+&main_ehrpwm5 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_ehrpwm5_a>;
+	status = "disabled";
+};
+
+&main_gpio0 {
+	gpio-line-names =
+		"", /* 0 */
+		"AQUILA_B17",
+		"AQUILA_B18",
+		"AQUILA_B52",
+		"AQUILA_B53",
+		"AQUILA_B56",
+		"AQUILA_D10",
+		"AQUILA_D11",
+		"AQUILA_A14",
+		"AQUILA_A13",
+		"", /* 10 */
+		"AQUILA_B67",
+		"AQUILA_B41",
+		"AQUILA_B43",
+		"AQUILA_D22",
+		"AQUILA_D23",
+		"AQUILA_B57",
+		"AQUILA_D27",
+		"AQUILA_B44",
+		"AQUILA_C06",
+		"AQUILA_C05", /* 20 */
+		"AQUILA_B34",
+		"AQUILA_B35",
+		"AQUILA_B37",
+		"AQUILA_B36",
+		"AQUILA_B59",
+		"AQUILA_B21",
+		"AQUILA_B20",
+		"AQUILA_D28",
+		"",
+		"AQUILA_B23", /* 30 */
+		"AQUILA_B42",
+		"",
+		"AQUILA_B45",
+		"AQUILA_D26",
+		"AQUILA_B60",
+		"AQUILA_A11",
+		"AQUILA_B58",
+		"AQUILA_A12",
+		"AQUILA_D12",
+		"AQUILA_D15", /* 40 */
+		"",
+		"AQUILA_D13",
+		"AQUILA_D14",
+		"AQUILA_B79",
+		"AQUILA_B47",
+		"AQUILA_B48",
+		"AQUILA_D79",
+		"AQUILA_D78",
+		"AQUILA_B22",
+		"AQUILA_B19", /* 50 */
+		"AQUILA_D19",
+		"AQUILA_A05",
+		"AQUILA_D17",
+		"AQUILA_D18",
+		"AQUILA_D20",
+		"AQUILA_B40",
+		"AQUILA_B39",
+		"AQUILA_A10",
+		"",
+		"AQUILA_A03", /* 60 */
+		"AQUILA_A01",
+		"AQUILA_A09",
+		"AQUILA_A08",
+		"AQUILA_A06",
+		"AQUILA_A04";
+};
+
+/* Aquila I2C_3_DSI1 */
+&main_i2c0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_i2c0>;
+	clock-frequency = <400000>;
+	status = "disabled";
+};
+
+/* Aquila I2C_4_CSI1 */
+&main_i2c1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_i2c1>;
+	clock-frequency = <400000>;
+	status = "disabled";
+};
+
+/* Aquila I2C_5_CSI2 */
+&main_i2c2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_i2c2>;
+	clock-frequency = <400000>;
+	status = "disabled";
+};
+
+/* Aquila I2C_6 */
+&main_i2c5 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_i2c5>;
+	clock-frequency = <400000>;
+	status = "disabled";
+};
+
+&mailbox0_cluster0 {
+	interrupts = <436>;
+	status = "okay";
+
+	mbox_mcu_r5fss0_core0: mbox-mcu-r5fss0-core0 {
+		ti,mbox-rx = <0 0 0>;
+		ti,mbox-tx = <1 0 0>;
+	};
+
+	mbox_mcu_r5fss0_core1: mbox-mcu-r5fss0-core1 {
+		ti,mbox-rx = <2 0 0>;
+		ti,mbox-tx = <3 0 0>;
+	};
+};
+
+&mailbox0_cluster1 {
+	interrupts = <432>;
+	status = "okay";
+
+	mbox_main_r5fss0_core0: mbox-main-r5fss0-core0 {
+		ti,mbox-rx = <0 0 0>;
+		ti,mbox-tx = <1 0 0>;
+	};
+
+	mbox_main_r5fss0_core1: mbox-main-r5fss0-core1 {
+		ti,mbox-rx = <2 0 0>;
+		ti,mbox-tx = <3 0 0>;
+	};
+};
+
+&mailbox0_cluster2 {
+	interrupts = <428>;
+	status = "okay";
+
+	mbox_main_r5fss1_core0: mbox-main-r5fss1-core0 {
+		ti,mbox-rx = <0 0 0>;
+		ti,mbox-tx = <1 0 0>;
+	};
+
+	mbox_main_r5fss1_core1: mbox-main-r5fss1-core1 {
+		ti,mbox-rx = <2 0 0>;
+		ti,mbox-tx = <3 0 0>;
+	};
+};
+
+&mailbox0_cluster3 {
+	interrupts = <424>;
+	status = "okay";
+
+	mbox_main_r5fss2_core0: mbox-main-r5fss2-core0 {
+		ti,mbox-rx = <0 0 0>;
+		ti,mbox-tx = <1 0 0>;
+	};
+
+	mbox_main_r5fss2_core1: mbox-main-r5fss2-core1 {
+		ti,mbox-rx = <2 0 0>;
+		ti,mbox-tx = <3 0 0>;
+	};
+};
+
+&mailbox0_cluster4 {
+	interrupts = <420>;
+	status = "okay";
+
+	mbox_c71_0: mbox-c71-0 {
+		ti,mbox-rx = <0 0 0>;
+		ti,mbox-tx = <1 0 0>;
+	};
+
+	mbox_c71_1: mbox-c71-1 {
+		ti,mbox-rx = <2 0 0>;
+		ti,mbox-tx = <3 0 0>;
+	};
+};
+
+&mailbox0_cluster5 {
+	interrupts = <416>;
+	status = "okay";
+
+	mbox_c71_2: mbox-c71-2 {
+		ti,mbox-rx = <0 0 0>;
+		ti,mbox-tx = <1 0 0>;
+	};
+
+	mbox_c71_3: mbox-c71-3 {
+		ti,mbox-rx = <2 0 0>;
+		ti,mbox-tx = <3 0 0>;
+	};
+};
+
+/* Aquila CAN_1 */
+&main_mcan10 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_mcan10>;
+	status = "disabled";
+};
+
+/* Aquila CAN_3 */
+&main_mcan13 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_mcan13>;
+	status = "disabled";
+};
+
+&main_r5fss0_core1 {
+	mboxes = <&mailbox0_cluster1 &mbox_main_r5fss0_core1>;
+	memory-region = <&main_r5fss0_core1_dma_memory_region>,
+			<&main_r5fss0_core1_memory_region>;
+	status = "okay";
+};
+
+&main_r5fss1_core0 {
+	mboxes = <&mailbox0_cluster2 &mbox_main_r5fss1_core0>;
+	memory-region = <&main_r5fss1_core0_dma_memory_region>,
+			<&main_r5fss1_core0_memory_region>;
+	status = "okay";
+};
+
+&main_r5fss1_core1 {
+	mboxes = <&mailbox0_cluster2 &mbox_main_r5fss1_core1>;
+	memory-region = <&main_r5fss1_core1_dma_memory_region>,
+			<&main_r5fss1_core1_memory_region>;
+	status = "okay";
+};
+
+&main_r5fss2_core0 {
+	mboxes = <&mailbox0_cluster3 &mbox_main_r5fss2_core0>;
+	memory-region = <&main_r5fss2_core0_dma_memory_region>,
+			<&main_r5fss2_core0_memory_region>;
+	status = "okay";
+};
+
+&main_r5fss2_core1 {
+	mboxes = <&mailbox0_cluster3 &mbox_main_r5fss2_core1>;
+	memory-region = <&main_r5fss2_core1_dma_memory_region>,
+			<&main_r5fss2_core1_memory_region>;
+	status = "okay";
+};
+
 /* On-module eMMC */
 &main_sdhci0 {
 	disable-wp;
@@ -100,6 +790,33 @@
 	non-removable;
 	ti,driver-strength-ohm = <50>;
 	status = "okay";
+};
+
+/* Aquila SD_1 */
+&main_sdhci1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_mmc1>, <&pinctrl_sd1_cd_gpio>;
+	cd-gpios = <&main_gpio0 58 GPIO_ACTIVE_LOW>;
+	disable-wp;
+	vmmc-supply = <&reg_sdhc1_vmmc>;
+	vqmmc-supply = <&reg_sdhc1_vqmmc>;
+	ti,driver-strength-ohm = <50>;
+	ti,fails-without-test-cd;
+	status = "disabled";
+};
+
+/* Aquila SPI_2 */
+&main_spi0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_spi0>, <&pinctrl_main_spi0_cs0>;
+	status = "disabled";
+};
+
+/* Aquila SPI_1 */
+&main_spi2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_spi2>, <&pinctrl_main_spi2_cs0>;
+	status = "disabled";
 };
 
 /* Aquila UART_1 */
@@ -116,11 +833,201 @@
 	status = "disabled";
 };
 
+/* Aquila I2C_1 */
+&mcu_i2c0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_mcu_i2c0>;
+	clock-frequency = <400000>;
+	status = "disabled";
+};
+
+/* Aquila I2C_2 */
+&mcu_i2c1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_mcu_i2c1>;
+	clock-frequency = <400000>;
+	status = "disabled";
+};
+
+/* Aquila CAN_2 */
+&mcu_mcan0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_mcu_mcan0>;
+	status = "disabled";
+};
+
+/* Aquila CAN_4 */
+&mcu_mcan1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_mcu_mcan1>;
+	status = "disabled";
+};
+
+&mcu_r5fss0_core0 {
+	mboxes = <&mailbox0_cluster0 &mbox_mcu_r5fss0_core0>;
+	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+			<&mcu_r5fss0_core0_memory_region>;
+	status = "okay";
+};
+
+&mcu_r5fss0_core1 {
+	mboxes = <&mailbox0_cluster0 &mbox_mcu_r5fss0_core1>;
+	memory-region = <&mcu_r5fss0_core1_dma_memory_region>,
+			<&mcu_r5fss0_core1_memory_region>;
+	status = "okay";
+};
+
+/* On-module SPI (TPM_SPI) */
+&mcu_spi0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_mcu_spi0>;
+	status = "okay";
+
+	tpm@0 {
+		compatible = "st,st33htpm-spi", "tcg,tpm_tis-spi";
+		reg = <0>;
+		interrupt-parent = <&wkup_gpio0>;
+		interrupts = <86 IRQ_TYPE_EDGE_FALLING>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_tpm_irq>;
+		spi-max-frequency = <33000000>;
+	};
+};
+
 /* Aquila UART_4 */
 &mcu_uart0 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_mcu_uart0>;
 	status = "disabled";
+};
+
+/* Aquila ADC_[1-4] */
+&tscadc0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_mcu_adc0>;
+	status = "disabled";
+
+	adc {
+		ti,adc-channels = <0 1 2 3>;
+	};
+};
+
+&wkup_gpio0 {
+	gpio-line-names =
+		"", /* 0 */
+		"",
+		"",
+		"",
+		"AQUILA_B54",
+		"AQUILA_B55",
+		"AQUILA_B33",
+		"AQUILA_B32",
+		"AQUILA_D09",
+		"AQUILA_D08",
+		"AQUILA_C42", /* 10 */
+		"",
+		"",
+		"",
+		"",
+		"",
+		"AQUILA_C20",
+		"AQUILA_D29",
+		"AQUILA_C18",
+		"AQUILA_C22",
+		"AQUILA_C21", /* 20 */
+		"AQUILA_C15",
+		"AQUILA_C16",
+		"AQUILA_C25",
+		"AQUILA_C26",
+		"AQUILA_C27",
+		"AQUILC_C28",
+		"AQUILA_C23",
+		"AQUILA_C17",
+		"AQUILA_D30",
+		"AQUILA_C31", /* 30 */
+		"AQUILA_C29",
+		"AQUILA_C01",
+		"AQUILA_C02",
+		"AQUILA_B65",
+		"AQUILA_D24",
+		"AQUILA_D25",
+		"AQUILA_C03",
+		"",
+		"AQUILA_C04",
+		"AQUILA_B84", /* 40 */
+		"AQUILA_B75",
+		"AQUILA_B86",
+		"AQUILA_B87",
+		"AQUILA_B89",
+		"AQUILA_B90",
+		"AQUILA_B83",
+		"AQUILA_B74",
+		"AQUILA_B81",
+		"",
+		"AQUILA_B78", /* 50 */
+		"AQUILA_B77",
+		"AQUILA_B71",
+		"AQUILA_B72",
+		"",
+		"",
+		"",
+		"",
+		"AQUILA_B30",
+		"AQUILA_B31",
+		"AQUILA_B49", /* 60 */
+		"AQUILA_B50",
+		"AQUILA_B80",
+		"",
+		"",
+		"AQUILA_B63",
+		"",
+		"",
+		"",
+		"",
+		"", /* 70 */
+		"AQUILA_D01",
+		"AQUILA_D02",
+		"AQUILA_D03",
+		"AQUILA_D04",
+		"",
+		"",
+		"",
+		"",
+		"AQUILA_B64",
+		"", /* 80 */
+		"AQUILA_C43",
+		"AQUILA_C41",
+		"",
+		"AQUILA_C58",
+		"",
+		"",
+		"AQUILA_B62",
+		"";
+};
+
+/* On-module I2C - WKUP_I2C0 */
+&wkup_i2c0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_wkup_i2c0>;
+	clock-frequency = <400000>;
+	status = "okay";
+
+	rtc_i2c: rtc@32 {
+		compatible = "epson,rx8130";
+		reg = <0x32>;
+		/* TODO: RTC IRQ# */
+	};
+
+	sensor@4f {
+		compatible = "ti,tmp1075";
+		reg = <0x4f>;
+	};
+
+	eeprom@50 {
+		compatible = "st,24c02", "atmel,24c02";
+		pagesize = <16>;
+		reg = <0x50>;
+	};
 };
 
 /* Aquila UART_2 */

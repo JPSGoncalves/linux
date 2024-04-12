@@ -20,6 +20,22 @@
 		     "ti,j784s4";
 };
 
+/* Aquila ETH_2 MDIO */
+&davinci_mdio {
+	status = "okay";
+
+	mcu_phy0: ethernet-phy@3 {
+		compatible = "ethernet-phy-ieee802.3-c22";
+		reg = <3>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_eth2_int>;
+		interrupt-parent = <&main_gpio0>;
+		interrupts = <44 IRQ_TYPE_EDGE_FALLING>;
+		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
+		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
+	};
+};
+
 /* Aquila PWM_1 */
 &main_ehrpwm0 {
 	status = "okay";
@@ -95,9 +111,46 @@
 	status = "okay";
 };
 
+&mcu_cpsw {
+	status = "okay";
+};
+
+/* Aquila ETH_2_RGMII */
+&mcu_cpsw_port1 {
+	phy-handle = <&mcu_phy0>;
+	phy-mode = "rgmii-rxid";
+	status = "okay";
+};
+
 /* Aquila I2C_1 */
 &mcu_i2c0 {
 	status = "okay";
+
+	/* Fan controller */
+	fan@18 {
+		compatible = "ti,amc6821";
+		reg = <0x18>;
+	};
+
+	/* Current measurement into module VCC */
+	hwmon@41 {
+		compatible = "ti,ina226";
+		reg = <0x41>;
+		shunt-resistor = <5000>;
+	};
+
+	/* Temperature sensor */
+	sensor@4f {
+		compatible = "ti,tmp1075";
+		reg = <0x4f>;
+	};
+
+	/* EEPROM */
+	eeprom@57 {
+		compatible = "st,24c02", "atmel,24c02";
+		reg = <0x57>;
+		pagesize = <16>;
+	};
 };
 
 /* Aquila I2C_2 */
@@ -120,9 +173,33 @@
 	status = "okay";
 };
 
+/* Aquila QSPI_1 */
+&ospi0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_mcu_ospi0_4bit>, <&pinctrl_mcu_ospi0_cs0>;
+	status = "okay";
+
+	flash@0 {
+		compatible = "jedec,spi-nor";
+		reg = <0x0>;
+		spi-max-frequency = <50000000>;
+		spi-rx-bus-width = <4>;
+		spi-tx-bus-width = <4>;
+	};
+};
+
 /* Aquila ADC_[1-4] */
 &tscadc0 {
 	status = "okay";
+};
+
+&wkup_gpio0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_wkup_gpio23>,
+		    <&pinctrl_wkup_gpio24>,
+		    <&pinctrl_wkup_gpio25>,
+		    <&pinctrl_wkup_gpio26>,
+		    <&pinctrl_wkup_gpio28>;
 };
 
 /* Aquila UART_2, through RS485 transceiver */

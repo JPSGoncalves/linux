@@ -21,6 +21,7 @@
 		can1 = &mcu_mcan0;
 		can2 = &main_mcan13;
 		can3 = &mcu_mcan1;
+		ethernet1 = &mcu_cpsw_port1;
 		i2c0 = &wkup_i2c0;
 		i2c1 = &mcu_i2c0;
 		i2c2 = &mcu_i2c1;
@@ -265,6 +266,13 @@
 		>;
 	};
 
+	/* Aquila ETH_2_RGMII_INT# */
+	pinctrl_eth2_int: main-gpio0-44-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x0b0, PIN_INPUT_PULLUP, 7) /* (AL33) MCASP1_AXR3.GPIO0_44 */ /* AQUILA B79 */
+		>;
+	};
+
 	/* Aquila I2C_3_DSI1 */
 	pinctrl_main_i2c0: main-i2c0-default-pins {
 		pinctrl-single,pins = <
@@ -390,6 +398,134 @@
 	};
 };
 
+&wkup_pmx0 {
+	/* Aquila QSPI_1 (4-bit) */
+	pinctrl_mcu_ospi0_4bit: mcu-ospi0-4bit-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x000, PIN_OUTPUT, 0) /* (E32) MCU_OSPI0_CLK  */ /* AQUILA C20 */
+			J784S4_WKUP_IOPAD(0x00c, PIN_INPUT, 0)  /* (B33) MCU_OSPI0_D0   */ /* AQUILA C22 */
+			J784S4_WKUP_IOPAD(0x010, PIN_INPUT, 0)  /* (B32) MCU_OSPI0_D1   */ /* AQUILA C21 */
+			J784S4_WKUP_IOPAD(0x014, PIN_INPUT, 0)  /* (C33) MCU_OSPI0_D2   */ /* AQUILA C15 */
+			J784S4_WKUP_IOPAD(0x018, PIN_INPUT, 0)  /* (C35) MCU_OSPI0_D3   */ /* AQUILA C16 */
+			J784S4_WKUP_IOPAD(0x008, PIN_INPUT, 0)  /* (C34) MCU_OSPI0_DQS  */ /* AQUILA C18 */
+		>;
+	};
+
+	/* Aquila QSPI_1 (8-bit) */
+	pinctrl_mcu_ospi0_8bit: mcu-ospi0-8bit-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x000, PIN_OUTPUT, 0) /* (E32) MCU_OSPI0_CLK  */ /* AQUILA C20 */
+			J784S4_WKUP_IOPAD(0x00c, PIN_INPUT, 0)  /* (B33) MCU_OSPI0_D0   */ /* AQUILA C22 */
+			J784S4_WKUP_IOPAD(0x010, PIN_INPUT, 0)  /* (B32) MCU_OSPI0_D1   */ /* AQUILA C21 */
+			J784S4_WKUP_IOPAD(0x014, PIN_INPUT, 0)  /* (C33) MCU_OSPI0_D2   */ /* AQUILA C15 */
+			J784S4_WKUP_IOPAD(0x018, PIN_INPUT, 0)  /* (C35) MCU_OSPI0_D3   */ /* AQUILA C16 */
+			J784S4_WKUP_IOPAD(0x01c, PIN_INPUT, 0)  /* (D33) MCU_OSPI0_D4   */ /* AQUILA C25 */
+			J784S4_WKUP_IOPAD(0x020, PIN_INPUT, 0)  /* (D34) MCU_OSPI0_D5   */ /* AQUILA C23 */
+			J784S4_WKUP_IOPAD(0x024, PIN_INPUT, 0)  /* (E34) MCU_OSPI0_D6   */ /* AQUILA C27 */
+			J784S4_WKUP_IOPAD(0x028, PIN_INPUT, 0)  /* (E33) MCU_OSPI0_D7   */ /* AQUILA C28 */
+			J784S4_WKUP_IOPAD(0x008, PIN_INPUT, 0)  /* (C34) MCU_OSPI0_DQS  */ /* AQUILA C18 */
+		>;
+	};
+
+	/* Aquila QSPI_1_CS1# */
+	pinctrl_mcu_ospi0_cs0: mcu-ospi0-cs0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x02c, PIN_OUTPUT, 0) /* (A32) MCU_OSPI0_CSn0 */ /* AQUILA C23 */
+		>;
+	};
+
+	/* Aquila QSPI_1_CS2# */
+	pinctrl_mcu_ospi0_cs1: mcu-ospi0-cs1-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x030, PIN_OUTPUT, 0) /* (A33) MCU_OSPI0_CSn1 */ /* AQUILA C17 */
+		>;
+	};
+
+	/* Aquila QSPI_1_SCK as GPIO */
+	pinctrl_wkup_gpio16: wkup-gpio16-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x000, PIN_INPUT, 7) /* (E32) MCU_OSPI0_CLK.WKUP_GPIO0_16 */ /* AQUILA C20 */
+		>;
+	};
+
+	/* Aquila QSPI_1_DQS as GPIO */
+	pinctrl_wkup_gpio18: wkup-gpio18-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x008, PIN_INPUT, 7) /* (C34) MCU_OSPI0_DQS.WKUP_GPIO0_18 */ /* AQUILA C18 */
+		>;
+	};
+
+	/* Aquila QSPI_1_IO0 as GPIO */
+	pinctrl_wkup_gpio19: wkup-gpio19-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x00c, PIN_INPUT, 7) /* (B33) MCU_OSPI0_D0.WKUP_GPIO0_19 */ /* AQUILA C22 */
+		>;
+	};
+
+	/* Aquila QSPI_1_IO1 as GPIO */
+	pinctrl_wkup_gpio20: wkup-gpio20-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x010, PIN_INPUT, 7) /* (B32) MCU_OSPI0_D1.WKUP_GPIO0_20 */ /* AQUILA C21 */
+		>;
+	};
+
+	/* Aquila QSPI_1_IO2 as GPIO */
+	pinctrl_wkup_gpio21: wkup-gpio21-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x014, PIN_INPUT, 7) /* (C33) MCU_OSPI0_D2.WKUP_GPIO0_21 */ /* AQUILA C15 */
+		>;
+	};
+
+	/* Aquila QSPI_1_IO3 as GPIO */
+	pinctrl_wkup_gpio22: wkup-gpio22-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x018, PIN_INPUT, 7) /* (C35) MCU_OSPI0_D3.WKUP_GPIO0_22 */ /* AQUILA C16 */
+		>;
+	};
+
+	/* Aquila QSPI_1_IO4 as GPIO */
+	pinctrl_wkup_gpio23: wkup-gpio23-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x01c, PIN_INPUT, 7) /* (D33) MCU_OSPI0_D4.WKUP_GPIO0_23 */ /* AQUILA C25 */
+		>;
+	};
+
+	/* Aquila QSPI_1_IO5 as GPIO */
+	pinctrl_wkup_gpio24: wkup-gpio24-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x020, PIN_INPUT, 7) /* (D34) MCU_OSPI0_D5.WKUP_GPIO0_24 */ /* AQUILA C26 */
+		>;
+	};
+
+	/* Aquila QSPI_1_IO6 as GPIO */
+	pinctrl_wkup_gpio25: wkup-gpio25-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x024, PIN_INPUT, 7) /* (E34) MCU_OSPI0_D6.WKUP_GPIO0_25 */ /* AQUILA C27 */
+		>;
+	};
+
+	/* Aquila QSPI_1_IO7 as GPIO */
+	pinctrl_wkup_gpio26: wkup-gpio26-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x028, PIN_INPUT, 7) /* (E33) MCU_OSPI0_D7.WKUP_GPIO0_26 */ /* AQUILA C28 */
+		>;
+	};
+
+	/* Aquila QSPI_1_CS#1 as GPIO */
+	pinctrl_wkup_gpio27: wkup-gpio27-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x02c, PIN_INPUT, 7) /* (A32) MCU_OSPI0_CSn0.WKUP_GPIO0_27 */ /* AQUILA C23 */
+		>;
+	};
+
+	/* Aquila QSPI_1_CS#2 as GPIO */
+	pinctrl_wkup_gpio28: wkup-gpio28-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x030, PIN_INPUT, 7) /* (A33) MCU_OSPI0_CSn1.WKUP_GPIO0_28 */ /* AQUILA C17 */
+		>;
+	};
+};
+
 &wkup_pmx1 {
 	/* Aquila UART_4 */
 	pinctrl_mcu_uart0: mcu-uart0-default-pins {
@@ -440,6 +576,32 @@
 		pinctrl-single,pins = <
 			J784S4_WKUP_IOPAD(0x06c, PIN_INPUT, 0)  /* (K36) WKUP_GPIO0_5.MCU_MCAN1_RX */ /* AQUILA B55 */
 			J784S4_WKUP_IOPAD(0x068, PIN_OUTPUT, 0) /* (H35) WKUP_GPIO0_4.MCU_MCAN1_TX */ /* AQUILA B54 */
+		>;
+	};
+
+	/* Aquila ETH_2 MDIO */
+	pinctrl_mcu_mdio: mcu-mdio-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x034, PIN_OUTPUT, 0) /* (A36) MCU_MDIO0_MDC  */ /* AQUILA B72 */
+			J784S4_WKUP_IOPAD(0x030, PIN_INPUT, 0)  /* (B35) MCU_MDIO0_MDIO */ /* AQUILA B71 */
+		>;
+	};
+
+	/* Aquila ETH_2 RGMII */
+	pinctrl_mcu_rgmii1: mcu-rgmii1-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x02c, PIN_INPUT, 0)  /* (A35) MCU_RGMII1_RD0    */ /* AQUILA B77 */
+			J784S4_WKUP_IOPAD(0x028, PIN_INPUT, 0)  /* (B36) MCU_RGMII1_RD1    */ /* AQUILA B78 */
+			J784S4_WKUP_IOPAD(0x024, PIN_INPUT, 0)  /* (C36) MCU_RGMII1_RD2    */ /* AQUILA B80 */
+			J784S4_WKUP_IOPAD(0x020, PIN_INPUT, 0)  /* (D36) MCU_RGMII1_RD3    */ /* AQUILA B81 */
+			J784S4_WKUP_IOPAD(0x01c, PIN_INPUT, 0)  /* (B37) MCU_RGMII1_RXC    */ /* AQUILA B74 */
+			J784S4_WKUP_IOPAD(0x004, PIN_INPUT, 0)  /* (C37) MCU_RGMII1_RX_CTL */ /* AQUILA B75 */
+			J784S4_WKUP_IOPAD(0x014, PIN_OUTPUT, 0) /* (D37) MCU_RGMII1_TD0    */ /* AQUILA B90 */
+			J784S4_WKUP_IOPAD(0x010, PIN_OUTPUT, 0) /* (D38) MCU_RGMII1_TD1    */ /* AQUILA B89 */
+			J784S4_WKUP_IOPAD(0x00c, PIN_OUTPUT, 0) /* (E37) MCU_RGMII1_TD2    */ /* AQUILA B87 */
+			J784S4_WKUP_IOPAD(0x008, PIN_OUTPUT, 0) /* (E38) MCU_RGMII1_TD3    */ /* AQUILA B86 */
+			J784S4_WKUP_IOPAD(0x018, PIN_OUTPUT, 0) /* (E36) MCU_RGMII1_TXC    */ /* AQUILA B83 */
+			J784S4_WKUP_IOPAD(0x000, PIN_OUTPUT, 0) /* (C38) MCU_RGMII1_TX_CTL */ /* AQUILA B84 */
 		>;
 	};
 
@@ -512,6 +674,13 @@
 	memory-region = <&c71_3_dma_memory_region>,
 			<&c71_3_memory_region>;
 	status = "okay";
+};
+
+/* Aquila ETH_2_MDIO */
+&davinci_mdio {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_mcu_mdio>;
+	status = "disabled";
 };
 
 /* Aquila PWM_1 */
@@ -833,6 +1002,17 @@
 	status = "disabled";
 };
 
+&mcu_cpsw {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_mcu_rgmii1>;
+	status = "disabled";
+};
+
+/* Aquila ETH_2_RGMII */
+&mcu_cpsw_port1 {
+	status = "disabled";
+};
+
 /* Aquila I2C_1 */
 &mcu_i2c0 {
 	pinctrl-names = "default";
@@ -898,6 +1078,13 @@
 &mcu_uart0 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_mcu_uart0>;
+	status = "disabled";
+};
+
+/* Aquila QSPI_1 */
+&ospi0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_mcu_ospi0_8bit>, <&pinctrl_mcu_ospi0_cs0>;
 	status = "disabled";
 };
 

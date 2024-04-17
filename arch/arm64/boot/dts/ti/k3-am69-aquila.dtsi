@@ -225,10 +225,8 @@
 
 	reg_sdhc1_vqmmc: regulator-sdhci1-vqmmc {
 		compatible = "regulator-gpio";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_sdio_pwr_sel>;
 		/* SDIO_PWR_SEL_3.3V */
-		gpios = <&wkup_gpio0 66 GPIO_ACTIVE_HIGH>;
+		gpios = <&som_gpio_expander 7 GPIO_ACTIVE_HIGH>;
 		regulator-name = "+VDD_SD_DV";
 		regulator-min-microvolt = <1800000>;
 		regulator-max-microvolt = <3300000>;
@@ -527,11 +525,17 @@
 };
 
 &wkup_pmx1 {
-	/* Aquila UART_4 */
-	pinctrl_mcu_uart0: mcu-uart0-default-pins {
+	/* Aquila UART_4 (RXD) */
+	pinctrl_mcu_uart0_rx: mcu-uart0-rx-default-pins {
 		pinctrl-single,pins = <
 			J784S4_WKUP_IOPAD(0x018, PIN_INPUT, 4)  /* (D31) MCU_OSPI1_D1.MCU_UART0_RXD */ /* AQUILA D24 */
-			J784S4_WKUP_IOPAD(0x01c, PIN_OUTPUT, 4) /* (G31) MCU_OSPI1_D2.MCU_UART0_TXD */ /* AQUILA D25 */
+		>;
+	};
+
+	/* RTC_IRQ# */
+	pinctrl_rtc_irq: wkup-gpio34-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x014, PIN_INPUT, 7) /* (E35) MCU_OSPI1_D0.WKUP_GPIO0_34 */
 		>;
 	};
 };
@@ -615,17 +619,17 @@
 		>;
 	};
 
-	/* SDIO_PWR_SEL_3.3V */
-	pinctrl_sdio_pwr_sel: wkup-gpio0-66-default-pins {
+	/* Aquila UART_4 (TX) */
+	pinctrl_mcu_uart0_tx: mcu-uart0-tx-default-pins {
 		pinctrl-single,pins = <
-			J784S4_WKUP_IOPAD(0x118, PIN_INPUT, 7) /* (N34) WKUP_GPIO0_66 */
+			J784S4_WKUP_IOPAD(0x080, PIN_OUTPUT, 2) /* (L33) WKUP_GPIO0_10.MCU_UART0_TXD */ /* AQUILA D25 */
 		>;
 	};
 
 	/* On-module TPM IRQ# */
-	pinctrl_tpm_irq: wkup-gpio0-86-default-pins {
+	pinctrl_tpm_irq: wkup-gpio0-81-default-pins {
 		pinctrl-single,pins = <
-			J784S4_WKUP_IOPAD(0x108, PIN_INPUT, 7) /* (Y36) MCU_ADC1_AIN7.WKUP_GPIO0_86 */
+			J784S4_WKUP_IOPAD(0x0f4, PIN_INPUT, 7) /* (V34) MCU_ADC1_AIN2.WKUP_GPIO0_81 */
 		>;
 	};
 
@@ -723,7 +727,7 @@
 		"AQUILA_D11",
 		"AQUILA_A14",
 		"AQUILA_A13",
-		"", /* 10 */
+		"AQUILA_B65", /* 10 */
 		"AQUILA_B67",
 		"AQUILA_B41",
 		"AQUILA_B43",
@@ -741,11 +745,11 @@
 		"AQUILA_B59",
 		"AQUILA_B21",
 		"AQUILA_B20",
+		"AQUILA_B64",
 		"AQUILA_D28",
-		"",
 		"AQUILA_B23", /* 30 */
 		"AQUILA_B42",
-		"",
+		"AQUILA_C43",
 		"AQUILA_B45",
 		"AQUILA_D26",
 		"AQUILA_B60",
@@ -754,7 +758,7 @@
 		"AQUILA_A12",
 		"AQUILA_D12",
 		"AQUILA_D15", /* 40 */
-		"",
+		"AQUILA_C41",
 		"AQUILA_D13",
 		"AQUILA_D14",
 		"AQUILA_B79",
@@ -1066,10 +1070,10 @@
 	tpm@0 {
 		compatible = "st,st33htpm-spi", "tcg,tpm_tis-spi";
 		reg = <0>;
-		interrupt-parent = <&wkup_gpio0>;
-		interrupts = <86 IRQ_TYPE_EDGE_FALLING>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_tpm_irq>;
+		interrupt-parent = <&wkup_gpio0>;
+		interrupts = <81 IRQ_TYPE_EDGE_FALLING>;
 		spi-max-frequency = <33000000>;
 	};
 };
@@ -1077,7 +1081,7 @@
 /* Aquila UART_4 */
 &mcu_uart0 {
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_mcu_uart0>;
+	pinctrl-0 = <&pinctrl_mcu_uart0_rx>, <&pinctrl_mcu_uart0_tx>;
 	status = "disabled";
 };
 
@@ -1104,14 +1108,14 @@
 		"", /* 0 */
 		"",
 		"",
-		"",
+		"AQUILA_C55",
 		"AQUILA_B54",
 		"AQUILA_B55",
 		"AQUILA_B33",
 		"AQUILA_B32",
 		"AQUILA_D09",
 		"AQUILA_D08",
-		"AQUILA_C42", /* 10 */
+		"AQUILA_D25", /* 10 */
 		"",
 		"",
 		"",
@@ -1131,15 +1135,15 @@
 		"AQUILA_C23",
 		"AQUILA_C17",
 		"AQUILA_D30",
-		"AQUILA_C31", /* 30 */
+		"AQUILA_D31", /* 30 */
 		"AQUILA_C29",
 		"AQUILA_C01",
 		"AQUILA_C02",
-		"AQUILA_B65",
-		"AQUILA_D24",
-		"AQUILA_D25",
-		"AQUILA_C03",
 		"",
+		"AQUILA_D24",
+		"",
+		"AQUILA_C03",
+		"AQUILA_C30",
 		"AQUILA_C04",
 		"AQUILA_B84", /* 40 */
 		"AQUILA_B75",
@@ -1176,14 +1180,14 @@
 		"AQUILA_D02",
 		"AQUILA_D03",
 		"AQUILA_D04",
+		"AQUILA_C62",
+		"AQUILA_C61",
+		"AQUILA_C65",
+		"AQUILA_C64",
+		"",
+		"AQUILA_C42", /* 80 */
 		"",
 		"",
-		"",
-		"",
-		"AQUILA_B64",
-		"", /* 80 */
-		"AQUILA_C43",
-		"AQUILA_C41",
 		"",
 		"AQUILA_C58",
 		"",
@@ -1199,10 +1203,29 @@
 	clock-frequency = <400000>;
 	status = "okay";
 
+	som_gpio_expander: gpio@20 {
+		compatible = "ti,tca6408";
+		reg = <0x20>;
+		#gpio-cells = <2>;
+		gpio-controller;
+		gpio-line-names =
+			"USB_MUX_SEL",
+			"COLD_RESET_REQ",
+			"PWR_DOWN_REQ",
+			"PCIE_3_RESET#",
+			"PCIE_4_RESET#",
+			"WIFI_DISABLE",
+			"BT_DISABLE",
+			"SDIO_PWR_SEL_3.3V";
+	};
+
 	rtc_i2c: rtc@32 {
 		compatible = "epson,rx8130";
 		reg = <0x32>;
-		/* TODO: RTC IRQ# */
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_rtc_irq>;
+		interrupt-parent = <&wkup_gpio0>;
+		interrupts = <34 IRQ_TYPE_EDGE_FALLING>;
 	};
 
 	sensor@4f {

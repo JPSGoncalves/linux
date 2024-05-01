@@ -21,7 +21,8 @@
 		can1 = &mcu_mcan0;
 		can2 = &main_mcan13;
 		can3 = &mcu_mcan1;
-		ethernet1 = &mcu_cpsw_port1;
+		ethernet0 = &mcu_cpsw_port1;
+		ethernet1 = &main_cpsw0_port2;
 		i2c0 = &wkup_i2c0;
 		i2c1 = &mcu_i2c0;
 		i2c2 = &mcu_i2c1;
@@ -264,10 +265,24 @@
 		>;
 	};
 
-	/* Aquila ETH_2_RGMII_INT# */
+	/* Aquila PCIE_1_RESET# */
+	pinctrl_pcie0_reset: main-gpio0-32-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x080, PIN_INPUT, 7) /* (AK34) MCASP0_AXR4.GPIO0_32 */ /* AQUILA C38 */
+		>;
+	};
+
+	/* Aquila PCIE_2_RESET# */
+	pinctrl_pcie1_reset: main-gpio0-32-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x0a4, PIN_INPUT, 7) /* (AJ36) MCASP0_AXR13.GPIO0_41 */ /* AQUILA C35 */
+		>;
+	};
+
+	/* Aquila ETH_2_xGMII_INT# */
 	pinctrl_eth2_int: main-gpio0-44-default-pins {
 		pinctrl-single,pins = <
-			J784S4_IOPAD(0x0b0, PIN_INPUT_PULLUP, 7) /* (AL33) MCASP1_AXR3.GPIO0_44 */ /* AQUILA B79 */
+			J784S4_IOPAD(0x0b0, PIN_INPUT_PULLUP, 7) /* (AL33) MCASP1_AXR3.GPIO0_44 */ /* AQUILA B81 */
 		>;
 	};
 
@@ -316,6 +331,14 @@
 		pinctrl-single,pins = <
 			J784S4_IOPAD(0x010, PIN_INPUT, 0)  /* (AH33) MCAN13_RX */ /* AQUILA B53 */
 			J784S4_IOPAD(0x00c, PIN_OUTPUT, 0) /* (AF33) MCAN13_TX */ /* AQUILA B52 */
+		>;
+	};
+
+	/* Aquila ETH_2 MDIO */
+	pinctrl_main_mdio0: main-mdio0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x0c0, PIN_OUTPUT, 6) /* (AD38) MCASP1_AXR0.MDIO0_MDC  */ /* AQUILA B89 */
+			J784S4_IOPAD(0x0bc, PIN_INPUT, 6)  /* (AD33) MCASP1_AFSX.MDIO0_MDIO */ /* AQUILA B90 */
 		>;
 	};
 
@@ -583,29 +606,29 @@
 		>;
 	};
 
-	/* Aquila ETH_2 MDIO */
+	/* On-module ETH_1 MDIO */
 	pinctrl_mcu_mdio: mcu-mdio-default-pins {
 		pinctrl-single,pins = <
-			J784S4_WKUP_IOPAD(0x034, PIN_OUTPUT, 0) /* (A36) MCU_MDIO0_MDC  */ /* AQUILA B72 */
-			J784S4_WKUP_IOPAD(0x030, PIN_INPUT, 0)  /* (B35) MCU_MDIO0_MDIO */ /* AQUILA B71 */
+			J784S4_WKUP_IOPAD(0x034, PIN_OUTPUT, 0) /* (A36) MCU_MDIO0_MDC  */
+			J784S4_WKUP_IOPAD(0x030, PIN_INPUT, 0)  /* (B35) MCU_MDIO0_MDIO */
 		>;
 	};
 
-	/* Aquila ETH_2 RGMII */
+	/* On-module ETH_1 RGMII */
 	pinctrl_mcu_rgmii1: mcu-rgmii1-default-pins {
 		pinctrl-single,pins = <
-			J784S4_WKUP_IOPAD(0x02c, PIN_INPUT, 0)  /* (A35) MCU_RGMII1_RD0    */ /* AQUILA B77 */
-			J784S4_WKUP_IOPAD(0x028, PIN_INPUT, 0)  /* (B36) MCU_RGMII1_RD1    */ /* AQUILA B78 */
-			J784S4_WKUP_IOPAD(0x024, PIN_INPUT, 0)  /* (C36) MCU_RGMII1_RD2    */ /* AQUILA B80 */
-			J784S4_WKUP_IOPAD(0x020, PIN_INPUT, 0)  /* (D36) MCU_RGMII1_RD3    */ /* AQUILA B81 */
-			J784S4_WKUP_IOPAD(0x01c, PIN_INPUT, 0)  /* (B37) MCU_RGMII1_RXC    */ /* AQUILA B74 */
-			J784S4_WKUP_IOPAD(0x004, PIN_INPUT, 0)  /* (C37) MCU_RGMII1_RX_CTL */ /* AQUILA B75 */
-			J784S4_WKUP_IOPAD(0x014, PIN_OUTPUT, 0) /* (D37) MCU_RGMII1_TD0    */ /* AQUILA B90 */
-			J784S4_WKUP_IOPAD(0x010, PIN_OUTPUT, 0) /* (D38) MCU_RGMII1_TD1    */ /* AQUILA B89 */
-			J784S4_WKUP_IOPAD(0x00c, PIN_OUTPUT, 0) /* (E37) MCU_RGMII1_TD2    */ /* AQUILA B87 */
-			J784S4_WKUP_IOPAD(0x008, PIN_OUTPUT, 0) /* (E38) MCU_RGMII1_TD3    */ /* AQUILA B86 */
-			J784S4_WKUP_IOPAD(0x018, PIN_OUTPUT, 0) /* (E36) MCU_RGMII1_TXC    */ /* AQUILA B83 */
-			J784S4_WKUP_IOPAD(0x000, PIN_OUTPUT, 0) /* (C38) MCU_RGMII1_TX_CTL */ /* AQUILA B84 */
+			J784S4_WKUP_IOPAD(0x02c, PIN_INPUT, 0)  /* (A35) MCU_RGMII1_RD0    */
+			J784S4_WKUP_IOPAD(0x028, PIN_INPUT, 0)  /* (B36) MCU_RGMII1_RD1    */
+			J784S4_WKUP_IOPAD(0x024, PIN_INPUT, 0)  /* (C36) MCU_RGMII1_RD2    */
+			J784S4_WKUP_IOPAD(0x020, PIN_INPUT, 0)  /* (D36) MCU_RGMII1_RD3    */
+			J784S4_WKUP_IOPAD(0x01c, PIN_INPUT, 0)  /* (B37) MCU_RGMII1_RXC    */
+			J784S4_WKUP_IOPAD(0x004, PIN_INPUT, 0)  /* (C37) MCU_RGMII1_RX_CTL */
+			J784S4_WKUP_IOPAD(0x014, PIN_OUTPUT, 0) /* (D37) MCU_RGMII1_TD0    */
+			J784S4_WKUP_IOPAD(0x010, PIN_OUTPUT, 0) /* (D38) MCU_RGMII1_TD1    */
+			J784S4_WKUP_IOPAD(0x00c, PIN_OUTPUT, 0) /* (E37) MCU_RGMII1_TD2    */
+			J784S4_WKUP_IOPAD(0x008, PIN_OUTPUT, 0) /* (E38) MCU_RGMII1_TD3    */
+			J784S4_WKUP_IOPAD(0x018, PIN_OUTPUT, 0) /* (E36) MCU_RGMII1_TXC    */
+			J784S4_WKUP_IOPAD(0x000, PIN_OUTPUT, 0) /* (C38) MCU_RGMII1_TX_CTL */
 		>;
 	};
 
@@ -680,10 +703,33 @@
 	status = "okay";
 };
 
-/* Aquila ETH_2_MDIO */
+/* On-module ETH_1 MDIO */
 &davinci_mdio {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_mcu_mdio>;
+	status = "disabled";
+
+	mcu_phy0: ethernet-phy@0 {
+		reg = <0>;
+		interrupt-parent = <&wkup_gpio0>;
+		interrupts = <79 IRQ_TYPE_EDGE_FALLING>;
+		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
+		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
+	};
+};
+
+/* Aquila ETH_2 MDIO */
+&main_cpsw0_mdio {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_mdio0>;
+};
+
+/* Aquila ETH_2 SGMII PHY */
+&main_cpsw0_port2 {
+	phy-handle = <&cpsw9g_phy0>;
+	phy-mode = "sgmii";
+	phys = <&cpsw0_phy_gmii_sel 2>, <&serdes1_sgmii_link>;
+	phy-names = "mac", "serdes";
 	status = "disabled";
 };
 
@@ -1012,8 +1058,10 @@
 	status = "disabled";
 };
 
-/* Aquila ETH_2_RGMII */
+/* On-module ETH_1 RGMII */
 &mcu_cpsw_port1 {
+	phy-handle = <&mcu_phy0>;
+	phy-mode = "rgmii-rxid";
 	status = "disabled";
 };
 
@@ -1090,6 +1138,131 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_mcu_ospi0_8bit>, <&pinctrl_mcu_ospi0_cs0>;
 	status = "disabled";
+};
+
+/* Aquila PCIE_1 */
+&pcie0_rc {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_pcie0_reset>;
+	num-lanes = <2>;
+	phy-names = "pcie-phy";
+	phys = <&serdes1_pcie0_2l_link>;
+	reset-gpios = <&main_gpio0 32 GPIO_ACTIVE_LOW>;
+	status = "disabled";
+};
+
+/* Aquila PCIE_2 */
+&pcie1_rc {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_pcie1_reset>;
+	num-lanes = <2>;
+	phy-names = "pcie-phy";
+	phys = <&serdes0_pcie1_2l_link>;
+	reset-gpios = <&main_gpio0 41 GPIO_ACTIVE_LOW>;
+	status = "disabled";
+};
+
+/* TODO: On-module PCIE (pcie2_ep) to USB-bridge TUSB7320 */
+
+/* PCIE for On-module Wi-Fi */
+&pcie3_ep {
+	num-lanes = <1>;
+	phys = <&serdes0_pcie3_1l_link>;
+	phy-names = "pcie-phy";
+	status = "okay";
+};
+
+&serdes0 {
+	status = "okay";
+
+	/* Aquila PCIE_2 */
+	serdes0_pcie1_2l_link: phy@0 {
+		reg = <0>;
+		cdns,num-lanes = <2>;
+		cdns,phy-type = <PHY_TYPE_PCIE>;
+		#phy-cells = <0>;
+		resets = <&serdes_wiz0 1>, <&serdes_wiz0 2>;
+	};
+
+	/* On-module PCIe Wi-Fi */
+	serdes0_pcie3_1l_link: phy@2 {
+		reg = <2>;
+		cdns,num-lanes = <1>;
+		cdns,phy-type = <PHY_TYPE_PCIE>;
+		#phy-cells = <0>;
+		resets = <&serdes_wiz0 3>;
+	};
+
+	/* Aquila USB0 SS */
+	serdes0_usb0_ss_link: phy@3 {
+		reg = <3>;
+		cdns,num-lanes = <1>;
+		#phy-cells = <0>;
+		cdns,phy-type = <PHY_TYPE_USB3>;
+		resets = <&serdes_wiz0 4>;
+	};
+};
+
+&serdes1 {
+	status = "okay";
+
+	/* Aquila PCIE_1 */
+	serdes1_pcie0_2l_link: phy@0 {
+		reg = <0>;
+		cdns,num-lanes = <2>;
+		cdns,phy-type = <PHY_TYPE_PCIE>;
+		#phy-cells = <0>;
+		resets = <&serdes_wiz1 1>, <&serdes_wiz1 2>;
+	};
+
+	/* On-module PCIe USB Bridge */
+	serdes1_pcie2_1l_link: phy@2 {
+		reg = <2>;
+		cdns,num-lanes = <1>;
+		cdns,phy-type = <PHY_TYPE_PCIE>;
+		#phy-cells = <0>;
+		resets = <&serdes_wiz1 3>;
+	};
+
+	/* Aquila ETH_2 xGMII */
+	serdes1_sgmii_link: phy@3 {
+		reg = <3>;
+		cdns,num-lanes = <1>;
+		cdns,phy-type = <PHY_TYPE_SGMII>;
+		#phy-cells = <0>;
+		resets = <&serdes_wiz1 4>;
+	};
+};
+
+&serdes_refclk {
+	clock-frequency = <100000000>;
+};
+
+&serdes_ln_ctrl {
+	idle-states = <J784S4_SERDES0_LANE0_PCIE1_LANE0>,     /* Aquila PCIE_2 L0          */
+		      <J784S4_SERDES0_LANE1_PCIE1_LANE1>,     /* Aquila PCIE_2 L1          */
+		      <J784S4_SERDES0_LANE2_PCIE3_LANE0>,     /* On-module PCIe Wi-Fi      */
+		      <J784S4_SERDES0_LANE3_USB>,             /* Aquila USB0 SS            */
+		      <J784S4_SERDES1_LANE0_PCIE0_LANE0>,     /* Aquila PCIE_1 L0          */
+		      <J784S4_SERDES1_LANE1_PCIE0_LANE1>,     /* Aquila PCIE_1 L1          */
+		      <J784S4_SERDES1_LANE2_PCIE2_LANE0>,     /* On-module PCIe USB Bridge */
+		      <J784S4_SERDES1_LANE3_QSGMII_LANE2>,    /* Aquila ETH_2 xGMII        */
+		      <J784S4_SERDES2_LANE0_QSGMII_LANE5>,    /* Aquila SGMII MSP_6        */
+		      <J784S4_SERDES2_LANE1_QSGMII_LANE6>,    /* Aquila SGMII MSP_7        */
+		      <J784S4_SERDES2_LANE2_QSGMII_LANE7>,    /* Aquila SGMII MSP_8        */
+		      <J784S4_SERDES2_LANE3_QSGMII_LANE8>,    /* Aquila SGMII MSP_9        */
+		      <J784S4_SERDES4_LANE0_EDP_LANE0>,       /* Aquila DP L0              */
+		      <J784S4_SERDES4_LANE1_EDP_LANE1>,       /* Aquila DP L1              */
+		      <J784S4_SERDES4_LANE2_EDP_LANE2>,       /* Aquila DP L2              */
+		      <J784S4_SERDES4_LANE3_EDP_LANE3>;       /* Aquila DP L3              */
+};
+
+&serdes_wiz0 {
+	status = "okay";
+};
+
+&serdes_wiz1 {
+	status = "okay";
 };
 
 /* Aquila ADC_[1-4] */

@@ -20,20 +20,28 @@
 		     "ti,j784s4";
 };
 
-/* Aquila ETH_2 MDIO */
+/* On-module ETH_1 MDIO */
 &davinci_mdio {
 	status = "okay";
+};
 
-	mcu_phy0: ethernet-phy@3 {
-		compatible = "ethernet-phy-ieee802.3-c22";
+/* Aquila ETH_2 MDIO */
+&main_cpsw0_mdio {
+	status = "okay";
+
+	/* TODO: re-verify the PHY address */
+	cpsw9g_phy0: ethernet-phy@3 {
 		reg = <3>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_eth2_int>;
 		interrupt-parent = <&main_gpio0>;
 		interrupts = <44 IRQ_TYPE_EDGE_FALLING>;
-		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
-		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
 	};
+};
+
+/* Aquila ETH_2 SGMII PHY */
+&main_cpsw0_port2 {
+	status = "okay";
 };
 
 /* Aquila PWM_1 */
@@ -115,10 +123,8 @@
 	status = "okay";
 };
 
-/* Aquila ETH_2_RGMII */
+/* On-module ETH_1 RGMII */
 &mcu_cpsw_port1 {
-	phy-handle = <&mcu_phy0>;
-	phy-mode = "rgmii-rxid";
 	status = "okay";
 };
 
@@ -186,6 +192,16 @@
 		spi-rx-bus-width = <4>;
 		spi-tx-bus-width = <4>;
 	};
+};
+
+/* Aquila PCIE_1 */
+&pcie0_rc {
+	status = "okay";
+};
+
+/* Aquila PCIE_2 */
+&pcie1_rc {
+	status = "okay";
 };
 
 /* Aquila ADC_[1-4] */

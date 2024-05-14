@@ -20,6 +20,16 @@
 		     "ti,j784s4";
 };
 
+/* Aquila CTRL_PWR_BTN_MICO# */
+&aquila_key_power {
+	status = "okay";
+};
+
+/* Aquila CTRL_WAKE1_MICO# */
+&aquila_key_wake {
+	status = "okay";
+};
+
 /* On-module ETH_1 MDIO */
 &davinci_mdio {
 	status = "okay";

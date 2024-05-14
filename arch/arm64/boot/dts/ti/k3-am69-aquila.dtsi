@@ -7,8 +7,9 @@
  * https://www.toradex.com/computer-on-modules/aquila-arm-family/ti-am69
  */
 
-#include <dt-bindings/net/ti-dp83867.h>
 #include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/net/ti-dp83867.h>
 #include "k3-j784s4.dtsi"
 
 / {
@@ -37,6 +38,51 @@
 		serial1 = &wkup_uart0;
 		serial2 = &main_uart8;
 		serial3 = &mcu_uart0;
+	};
+
+	aquila_key_power: gpio-key-power {
+		compatible = "gpio-keys";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_pwr_btn_int>;
+		status = "disabled";
+
+		key-power {
+			/* Aquila CTRL_PWR_BTN_MICO# (AQUILA B93) */
+			gpios = <&wkup_gpio0 36 GPIO_ACTIVE_LOW>;
+			label = "Power Button";
+			linux,code = <KEY_POWER>;
+		};
+	};
+
+	aquila_key_wake: gpio-key-wakeup {
+		compatible = "gpio-keys";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_ctrl_wake1_mico>;
+		status = "disabled";
+
+		key-wakeup {
+			/* Aquila CTRL_WAKE1_MICO# (AQUILA D6) */
+			gpios = <&wkup_gpio0 49 GPIO_ACTIVE_LOW>;
+			label = "Wake Up";
+			linux,code = <KEY_WAKEUP>;
+			wakeup-source;
+		};
+	};
+
+	/* Aquila CTRL_RESET_MICO# (AQUILA B92) */
+	gpio-restart {
+		compatible = "gpio-restart";
+		/* COLD_RESET_REQ */
+		gpios = <&som_gpio_expander 1 GPIO_ACTIVE_HIGH>;
+		priority = <128>;
+	};
+
+	/* PWR_DOWN_REQ */
+	gpio-poweroff {
+		compatible = "gpio-poweroff";
+		/* PWR_DOWN_REQ */
+		gpios = <&som_gpio_expander 2 GPIO_ACTIVE_HIGH>;
+		timeout-ms = <3000>;
 	};
 
 	memory@80000000 {
@@ -207,6 +253,65 @@
 			reg = <0x00 0xab100000 0x00 0xf00000>;
 			no-map;
 		};
+	};
+
+	/* Module Power Supply (VCC) */
+	reg_vin: regulator-vin {
+		compatible = "regulator-fixed";
+		regulator-name = "+V_IN";
+	};
+
+	/* Enabled by EN_3V3_VIO (PMIC_GPIO_9) */
+	reg_3v3_vio: regulator-3v3-vio {
+		compatible = "regulator-fixed";
+		regulator-max-microvolt = <3300000>;
+		regulator-min-microvolt = <3300000>;
+		regulator-name = "+V3.3_VIO";
+		vin-supply = <&reg_vin>;
+	};
+
+	/* Enabled by +V1.8_MCU_IO */
+	reg_1v0_eth: regulator-1v0-eth {
+		compatible = "regulator-fixed";
+		regulator-max-microvolt = <1000000>;
+		regulator-min-microvolt = <1000000>;
+		regulator-name = "+V1.0_VIO";
+		vin-supply = <&reg_3v3_vio>;
+	};
+
+	/* Enabled by +V1.8_MCU_IO */
+	reg_2v5_eth: regulator-2v5-eth {
+		compatible = "regulator-fixed";
+		regulator-max-microvolt = <2500000>;
+		regulator-min-microvolt = <2500000>;
+		regulator-name = "+V2.5_VIO";
+		vin-supply = <&reg_3v3_vio>;
+	};
+
+	/* Enabled by EN_3V3_VIO (PMIC_GPIO_9) */
+	reg_1v1_usb_bridge: regulator-1v1-vio {
+		compatible = "regulator-fixed";
+		regulator-max-microvolt = <1100000>;
+		regulator-min-microvolt = <1100000>;
+		regulator-name = "+V1.1_VIO";
+		vin-supply = <&reg_vin>;
+	};
+
+	/* Enabled by EN_3V3_VIO (PMIC_GPIO_9) */
+	reg_3v3_wifi: regulator-3v3-wifi {
+		compatible = "regulator-fixed";
+		regulator-max-microvolt = <3300000>;
+		regulator-min-microvolt = <3300000>;
+		regulator-name = "+V3.3_WIFI";
+		vin-supply = <&reg_vin>;
+	};
+
+	reg_1v8_stby: regulator-1v8-stby {
+		compatible = "regulator-fixed";
+		regulator-max-microvolt = <1800000>;
+		regulator-min-microvolt = <1800000>;
+		regulator-name = "+V1.8_STBY";
+		vin-supply = <&reg_vin>;
 	};
 
 	/* Aquila SD_1_PWR_EN */
@@ -404,6 +509,13 @@
 		>;
 	};
 
+	/* PMIC_INT# */
+	pinctrl_pmic_int: main-gpio0-0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x000, PIN_INPUT, 7) /* (AN35) EXTINTn.GPIO0_0 */
+		>;
+	};
+
 	/* Aquila SD_1_CD# as GPIO */
 	pinctrl_sd1_cd_gpio: main-gpio0-58-default-pins {
 		pinctrl-single,pins = <
@@ -561,6 +673,13 @@
 			J784S4_WKUP_IOPAD(0x014, PIN_INPUT, 7) /* (E35) MCU_OSPI1_D0.WKUP_GPIO0_34 */
 		>;
 	};
+
+	/* Aquila CTRL_PWR_BTN_MICO# (PWR_BTN_INT#) */
+	pinctrl_pwr_btn_int: wkup-gpio36-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x01c, PIN_INPUT_PULLUP, 7) /* (G31) MCU_OSPI1_D2.WKUP_GPIO0_36 */ /* AQUILA B92 */
+		>;
+	};
 };
 
 &wkup_pmx2 {
@@ -671,6 +790,15 @@
 			J784S4_WKUP_IOPAD(0x074, PIN_OUTPUT, 0) /* (L36) WKUP_GPIO0_7.WKUP_UART0_RTSn */ /* AQUILA B34 */
 			J784S4_WKUP_IOPAD(0x048, PIN_INPUT, 0)  /* (K35) WKUP_UART0_RXD               */ /* AQUILA B31 */
 			J784S4_WKUP_IOPAD(0x04c, PIN_OUTPUT, 0) /* (K34) WKUP_UART0_TXD               */ /* AQUILA B33 */
+		>;
+	};
+};
+
+&wkup_pmx3 {
+	/* Aquila CTRL_WAKE1_MICO# */
+	pinctrl_ctrl_wake1_mico: wkup-gpio0-49-default-pins {
+		pinctrl-single,pins = <
+			J784S4_WKUP_IOPAD(0x000, PIN_INPUT_PULLUP, 7) /* (M33) WKUP_GPIO0_49 */ /* AQUILA D6 */
 		>;
 	};
 };
@@ -1400,6 +1528,96 @@
 		interrupts = <34 IRQ_TYPE_EDGE_FALLING>;
 	};
 
+	pmic_tps6594: pmic@48 {
+		compatible = "ti,tps6594-q1";
+		reg = <0x48>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_pmic_int>;
+		/* TODO : Explore option to use EXTINTN internal IRQ# */
+		interrupt-parent = <&main_gpio0>;
+		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
+
+		#gpio-cells = <2>;
+		gpio-controller;
+
+		buck12-supply = <&reg_vin>;
+		buck3-supply = <&reg_vin>;
+		buck4-supply = <&reg_vin>;
+		buck5-supply = <&reg_vin>;
+		ldo1-supply = <&reg_vin>;
+		ldo2-supply = <&reg_vin>;
+		ldo3-supply = <&reg_vin>;
+		ldo4-supply = <&reg_vin>;
+		system-power-controller;
+		ti,primary-pmic;
+
+		regulators {
+			reg_vdd_ddr: buck12 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-max-microvolt = <1100000>;
+				regulator-min-microvolt = <1100000>;
+				regulator-name = "+V1.1_VDD_DDR (PMIC BUCK12)";
+			};
+
+			reg_vdd_ram: buck3 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-max-microvolt = <850000>;
+				regulator-min-microvolt = <850000>;
+				regulator-name = "+V0.85_VDD_RAM (PMIC BUCK3)";
+			};
+
+			reg_vdd_io: buck4 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-max-microvolt = <1800000>;
+				regulator-min-microvolt = <1800000>;
+				regulator-name = "+V1.8_VDD_IO (PMIC BUCK4)";
+			};
+
+			reg_vdd_mcu: buck5 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-max-microvolt = <850000>;
+				regulator-min-microvolt = <850000>;
+				regulator-name = "+V0.85_VDD_MCU (PMIC BUCK5)";
+			};
+
+			reg_vda_phy: ldo1 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-max-microvolt = <1800000>;
+				regulator-min-microvolt = <1800000>;
+				regulator-name = "+V1.8_VDA_PHY (PMIC LDO1)";
+			};
+
+			reg_mcu_io: ldo2 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <1800000>;
+				regulator-name = "+V1.8_MCU_IO (PMIC LDO2)";
+			};
+
+			reg_vda_dll: ldo3 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-min-microvolt = <800000>;
+				regulator-max-microvolt = <800000>;
+				regulator-name = "+V0.8_VDA_DLL (PMIC LDO3)";
+			};
+
+			reg_vda_pll: ldo4 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <1800000>;
+				regulator-name = "+V0.8_VDA_PLL (PMIC LDO4)";
+			};
+		};
+	};
+
 	sensor@4f {
 		compatible = "ti,tmp1075";
 		reg = <0x4f>;
@@ -1410,6 +1628,14 @@
 		pagesize = <16>;
 		reg = <0x50>;
 	};
+};
+
+&wkup_gpio0 {
+	status = "okay";
+};
+
+&wkup_gpio_intr {
+	status = "okay";
 };
 
 /* Aquila UART_2 */

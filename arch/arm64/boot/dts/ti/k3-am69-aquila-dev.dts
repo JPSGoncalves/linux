@@ -162,6 +162,45 @@
 		reg = <0x4f>;
 	};
 
+	/* USB-C OTG (TCPC USB PD PHY) */
+	ptn5110@52 {
+		compatible = "nxp,ptn5110", "tcpci";
+		reg = <0x52>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_usb1_int>;
+		interrupt-parent = <&main_gpio0>;
+		interrupts = <28 IRQ_TYPE_EDGE_FALLING>;
+
+		connector {
+			compatible = "usb-c-connector";
+			data-role = "dual";
+			label = "USB-C OTG";
+			power-role = "source";
+			source-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
+
+			ports {
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				port@0 {
+					reg = <0>;
+
+					usb_1_con_hs: endpoint {
+						remote-endpoint = <&usb0_hs>;
+					};
+				};
+
+				port@1 {
+					reg = <1>;
+
+					usb_1_con_ss: endpoint {
+						remote-endpoint = <&usb0_ss_mux>;
+					};
+				};
+			};
+		};
+	};
+
 	/* EEPROM */
 	eeprom@57 {
 		compatible = "st,24c02", "atmel,24c02";
@@ -218,6 +257,30 @@
 /* Aquila ADC_[1-4] */
 &tscadc0 {
 	status = "okay";
+};
+
+&usbss0 {
+	status = "okay";
+};
+
+&usb0ss_mux {
+	status = "okay";
+
+	port {
+		usb0_ss_mux: endpoint {
+			remote-endpoint = <&usb_1_con_ss>;
+		};
+	};
+};
+
+&usb0 {
+	status = "okay";
+
+	port {
+		usb0_hs: endpoint {
+			remote-endpoint = <&usb_1_con_hs>;
+		};
+	};
 };
 
 &wkup_gpio0 {

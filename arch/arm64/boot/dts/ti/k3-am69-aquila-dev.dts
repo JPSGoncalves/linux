@@ -130,6 +130,7 @@
 
 /* Aquila I2C_1 */
 &mcu_i2c0 {
+	clock-frequency = <100000>;
 	status = "okay";
 
 	/* Fan controller */

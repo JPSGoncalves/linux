@@ -74,6 +74,13 @@
 	status = "okay";
 };
 
+&main_gpio0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_gpio_01>,  /* Aquila GPIO_01 */
+		    <&pinctrl_gpio_02>,  /* Aquila GPIO_02 */
+		    <&pinctrl_gpio_03>;  /* Aquila GPIO_03 */
+};
+
 /* Aquila I2C_3_DSI1 */
 &main_i2c0 {
 	status = "okay";
@@ -285,11 +292,11 @@
 
 &wkup_gpio0 {
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_wkup_gpio23>,
-		    <&pinctrl_wkup_gpio24>,
-		    <&pinctrl_wkup_gpio25>,
-		    <&pinctrl_wkup_gpio26>,
-		    <&pinctrl_wkup_gpio28>;
+	pinctrl-0 = <&pinctrl_gpio_04>,       /* Aquila GPIO_04 */
+		    <&pinctrl_gpio_05>,       /* Aquila GPIO_05 */
+		    <&pinctrl_gpio_06>,       /* Aquila GPIO_06 */
+		    <&pinctrl_gpio_07>,       /* Aquila GPIO_07 */
+		    <&pinctrl_gpio_08>;       /* Aquila GPIO_08 */
 };
 
 /* Aquila UART_2, through RS485 transceiver */

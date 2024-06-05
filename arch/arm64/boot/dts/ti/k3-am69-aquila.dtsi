@@ -353,6 +353,13 @@
 };
 
 &main_pmx0 {
+	/* Aquila DP_1_HPD */
+	pinctrl_main_dp0_hpd: main-dp0-hpd-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x014, PIN_INPUT, 13) /* (AG33) MCAN14_TX.DP0_HPD */ /* AQUILA B59 */
+		>;
+	};
+
 	/* Aquila PWM_1 */
 	pinctrl_main_ehrpwm0_b: main-ehrpwm0b-default-pins {
 		pinctrl-single,pins = <
@@ -1025,6 +1032,43 @@
 	};
 };
 
+&dss {
+	/* TODO: Validate the functionality without this. If found redundant, remove */
+	assigned-clocks = <&k3_clks 218 2>,
+			  <&k3_clks 218 5>,
+			  <&k3_clks 218 14>,
+			  <&k3_clks 218 18>;
+	assigned-clock-parents = <&k3_clks 218 3>,
+				 <&k3_clks 218 7>,
+				 <&k3_clks 218 16>,
+				 <&k3_clks 218 22>;
+	status = "disabled";
+};
+
+&dss_ports {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	port@0 {
+		reg = <0>;
+		dpi0_out: endpoint {
+			remote-endpoint = <&dp0_in>;
+		};
+	};
+};
+
+&dp0_ports {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	port@0 {
+		reg = <0>;
+		dp0_in: endpoint {
+			remote-endpoint = <&dpi0_out>;
+		};
+	};
+};
+
 /* Aquila ETH_2 MDIO */
 &main_cpsw0_mdio {
 	pinctrl-names = "default";
@@ -1439,6 +1483,14 @@
 	status = "disabled";
 };
 
+&mhdp {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_dp0_hpd>;
+	phy-names = "dpphy";
+	phys = <&serdes4_dp0_link>;
+	status = "disabled";
+};
+
 /* Aquila QSPI_1 */
 &ospi0 {
 	pinctrl-names = "default";
@@ -1490,28 +1542,28 @@
 	/* Aquila PCIE_2 */
 	serdes0_pcie1_2l_link: phy@0 {
 		reg = <0>;
-		cdns,num-lanes = <2>;
-		cdns,phy-type = <PHY_TYPE_PCIE>;
 		#phy-cells = <0>;
 		resets = <&serdes_wiz0 1>, <&serdes_wiz0 2>;
+		cdns,num-lanes = <2>;
+		cdns,phy-type = <PHY_TYPE_PCIE>;
 	};
 
 	/* On-module PCIe Wi-Fi */
 	serdes0_pcie3_1l_link: phy@2 {
 		reg = <2>;
-		cdns,num-lanes = <1>;
-		cdns,phy-type = <PHY_TYPE_PCIE>;
 		#phy-cells = <0>;
 		resets = <&serdes_wiz0 3>;
+		cdns,num-lanes = <1>;
+		cdns,phy-type = <PHY_TYPE_PCIE>;
 	};
 
 	/* Aquila USB0 SS */
 	serdes0_usb0_ss_link: phy@3 {
 		reg = <3>;
-		cdns,num-lanes = <1>;
 		#phy-cells = <0>;
-		cdns,phy-type = <PHY_TYPE_USB3>;
 		resets = <&serdes_wiz0 4>;
+		cdns,num-lanes = <1>;
+		cdns,phy-type = <PHY_TYPE_USB3>;
 	};
 };
 
@@ -1521,28 +1573,43 @@
 	/* Aquila PCIE_1 */
 	serdes1_pcie0_2l_link: phy@0 {
 		reg = <0>;
-		cdns,num-lanes = <2>;
-		cdns,phy-type = <PHY_TYPE_PCIE>;
 		#phy-cells = <0>;
 		resets = <&serdes_wiz1 1>, <&serdes_wiz1 2>;
+		cdns,num-lanes = <2>;
+		cdns,phy-type = <PHY_TYPE_PCIE>;
 	};
 
 	/* On-module PCIe USB Bridge */
 	serdes1_pcie2_1l_link: phy@2 {
 		reg = <2>;
-		cdns,num-lanes = <1>;
-		cdns,phy-type = <PHY_TYPE_PCIE>;
 		#phy-cells = <0>;
 		resets = <&serdes_wiz1 3>;
+		cdns,num-lanes = <1>;
+		cdns,phy-type = <PHY_TYPE_PCIE>;
 	};
 
 	/* Aquila ETH_2 xGMII */
 	serdes1_sgmii_link: phy@3 {
 		reg = <3>;
-		cdns,num-lanes = <1>;
-		cdns,phy-type = <PHY_TYPE_SGMII>;
 		#phy-cells = <0>;
 		resets = <&serdes_wiz1 4>;
+		cdns,num-lanes = <1>;
+		cdns,phy-type = <PHY_TYPE_SGMII>;
+	};
+};
+
+&serdes4 {
+	status = "disabled";
+
+	/* Aquila DP_1 */
+	serdes4_dp0_link: phy@0 {
+		reg = <0>;
+		#phy-cells = <0>;
+		resets = <&serdes_wiz4 1>, <&serdes_wiz4 2>,
+			 <&serdes_wiz4 3>, <&serdes_wiz4 4>;
+		cdns,max-bit-rate = <2700>;
+		cdns,num-lanes = <4>;
+		cdns,phy-type = <PHY_TYPE_DP>;
 	};
 };
 
@@ -1575,6 +1642,10 @@
 
 &serdes_wiz1 {
 	status = "okay";
+};
+
+&serdes_wiz4 {
+	status = "disabled";
 };
 
 /* Aquila ADC_[1-4] */

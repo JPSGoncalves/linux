@@ -18,6 +18,32 @@
 	compatible = "toradex,aquila-am69-dev",
 		     "toradex,aquila-am69",
 		     "ti,j784s4";
+
+	reg_3v3_dp: regulator-3v3-dp {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_gpio_21_dp>;
+		enable-active-high;
+		/* Aquila GPIO_21_DP (AQUILA B57) */
+		gpio = <&main_gpio0 37 GPIO_ACTIVE_HIGH>;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-name = "DP_3V3";
+		startup-delay-us = <10000>;
+	};
+
+	dp0-connector {
+		compatible = "dp-connector";
+		dp-pwr-supply = <&reg_3v3_dp>;
+		label = "Display Port";
+		type = "full-size";
+
+		port {
+			dp0_connector_in: endpoint {
+				remote-endpoint = <&dp0_out>;
+			};
+		};
+	};
 };
 
 /* Aquila CTRL_PWR_BTN_MICO# */
@@ -32,6 +58,19 @@
 
 /* On-module ETH_1 MDIO */
 &davinci_mdio {
+	status = "okay";
+};
+
+&dp0_ports {
+	port@4 {
+		reg = <4>;
+		dp0_out: endpoint {
+			remote-endpoint = <&dp0_connector_in>;
+		};
+	};
+};
+
+&dss {
 	status = "okay";
 };
 
@@ -236,6 +275,10 @@
 	status = "okay";
 };
 
+&mhdp {
+	status = "okay";
+};
+
 /* Aquila QSPI_1 */
 &ospi0 {
 	pinctrl-names = "default";
@@ -258,6 +301,14 @@
 
 /* Aquila PCIE_2 */
 &pcie1_rc {
+	status = "okay";
+};
+
+&serdes4 {
+	status = "okay";
+};
+
+&serdes_wiz4 {
 	status = "okay";
 };
 

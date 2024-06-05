@@ -879,6 +879,13 @@
 		>;
 	};
 
+	/* ETH_1_25MHZ_CLK (Aquila CTRL_MCLK_MOCI) */
+	pinctrl_mcu_clkout0: mcu-clkout0-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x084, PIN_OUTPUT, 6) /* (M38) WKUP_GPIO0_11.MCU_CLKOUT0 */ /* AQUILA A14 */
+		>;
+	};
+
 	/* Aquila I2C_1 */
 	pinctrl_mcu_i2c0: mcu-i2c0-default-pins {
 		pinctrl-single,pins = <
@@ -1019,8 +1026,11 @@
 
 /* On-module ETH_1 MDIO */
 &davinci_mdio {
+	assigned-clocks = <&k3_clks 157 174>;
+	assigned-clock-parents = <&k3_clks 157 176>;
+	assigned-clock-rates = <25000000>;
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_mcu_mdio>;
+	pinctrl-0 = <&pinctrl_mcu_clkout0>, <&pinctrl_mcu_mdio>;
 	status = "disabled";
 
 	mcu_phy0: ethernet-phy@0 {

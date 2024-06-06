@@ -472,6 +472,13 @@
 		>;
 	};
 
+	/* Aquila PWM_3_DSI as GPIO */
+	pinctrl_pwm3_dsi_gpio: main-gpio0-33-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x084, PIN_INPUT, 7) /* (AG38) MCASP0_AXR5.GPIO0_33 */ /* AQUILA B46 */
+		>;
+	};
+
 	/* Aquila GPIO_01 */
 	pinctrl_gpio_01: main-gpio0-34-default-pins {
 		pinctrl-single,pins = <

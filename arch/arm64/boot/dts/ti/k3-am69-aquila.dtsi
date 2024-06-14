@@ -1196,6 +1196,8 @@
 		"AQUILA_A03",
 		"AQUILA_A05",
 		"AQUILA_A07";
+
+	status = "okay";
 };
 
 /* Aquila I2C_3_DSI1 */
@@ -1786,6 +1788,8 @@
 		"",
 		"AQUILA_D07",
 		"";
+
+	status = "okay";
 };
 
 /* On-module I2C - WKUP_I2C0 */
@@ -1920,10 +1924,6 @@
 		pagesize = <16>;
 		reg = <0x50>;
 	};
-};
-
-&wkup_gpio0 {
-	status = "okay";
 };
 
 &wkup_gpio_intr {

@@ -890,7 +890,7 @@
 	/* ETH_1_25MHZ_CLK (Aquila CTRL_MCLK_MOCI) */
 	pinctrl_mcu_clkout0: mcu-clkout0-default-pins {
 		pinctrl-single,pins = <
-			J784S4_IOPAD(0x084, PIN_OUTPUT, 6) /* (M38) WKUP_GPIO0_11.MCU_CLKOUT0 */ /* AQUILA A14 */
+			J784S4_WKUP_IOPAD(0x084, PIN_OUTPUT, 6) /* (M38) WKUP_GPIO0_11.MCU_CLKOUT0 */ /* AQUILA A14 */
 		>;
 	};
 

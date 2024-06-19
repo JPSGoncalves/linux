@@ -596,6 +596,7 @@
 		pinctrl-single,pins = <
 			J784S4_IOPAD(0x104, PIN_INPUT, 0) /* (AB38) MMC1_CLK  */ /* AQUILA A5  */
 			J784S4_IOPAD(0x108, PIN_INPUT, 0) /* (AB36) MMC1_CMD  */ /* AQUILA A7  */
+			J784S4_IOPAD(0x100, PIN_INPUT, 0) /* (No Pin) MMC1_CLKLB */
 			J784S4_IOPAD(0x0fc, PIN_INPUT, 0) /* (AA33) MMC1_DAT0 */ /* AQUILA A3  */
 			J784S4_IOPAD(0x0f8, PIN_INPUT, 0) /* (AB34) MMC1_DAT1 */ /* AQUILA A2  */
 			J784S4_IOPAD(0x0f4, PIN_INPUT, 0) /* (AA32) MMC1_DAT2 */ /* AQUILA A10 */
@@ -1374,7 +1375,6 @@
 /* On-module eMMC */
 &main_sdhci0 {
 	disable-wp;
-	no-mmc-hs400; /* TODO: verify the actual status, copied from TI SK AM69 */
 	non-removable;
 	ti,driver-strength-ohm = <50>;
 	status = "okay";
@@ -1799,9 +1799,9 @@
 	clock-frequency = <400000>;
 	status = "okay";
 
-	som_gpio_expander: gpio@20 {
+	som_gpio_expander: gpio@21 {
 		compatible = "ti,tca6408";
-		reg = <0x20>;
+		reg = <0x21>;
 		#gpio-cells = <2>;
 		gpio-controller;
 		gpio-line-names =

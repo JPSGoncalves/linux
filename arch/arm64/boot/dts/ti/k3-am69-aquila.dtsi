@@ -1818,10 +1818,6 @@
 	rtc_i2c: rtc@32 {
 		compatible = "epson,rx8130";
 		reg = <0x32>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_rtc_irq>;
-		interrupt-parent = <&wkup_gpio0>;
-		interrupts = <34 IRQ_TYPE_EDGE_FALLING>;
 	};
 
 	pmic_tps6594: pmic@48 {

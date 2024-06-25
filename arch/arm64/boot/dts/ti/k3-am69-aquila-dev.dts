@@ -354,5 +354,5 @@
 &wkup_uart0 {
 	linux,rs485-enabled-at-boot-time;
 	rs485-rx-during-tx;
-	status = "reserved"; /* TODO: set to 'okay' after bring-up */
+	status = "okay";
 };

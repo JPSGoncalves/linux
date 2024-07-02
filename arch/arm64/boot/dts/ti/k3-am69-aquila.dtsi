@@ -1524,7 +1524,7 @@
 	num-lanes = <2>;
 	phy-names = "pcie-phy";
 	phys = <&serdes1_pcie0_2l_link>;
-	reset-gpios = <&main_gpio0 32 GPIO_ACTIVE_LOW>;
+	reset-gpios = <&main_gpio0 32 GPIO_ACTIVE_HIGH>;
 	status = "disabled";
 };
 
@@ -1535,23 +1535,25 @@
 	num-lanes = <2>;
 	phy-names = "pcie-phy";
 	phys = <&serdes0_pcie1_2l_link>;
-	reset-gpios = <&main_gpio0 41 GPIO_ACTIVE_LOW>;
+	reset-gpios = <&main_gpio0 41 GPIO_ACTIVE_HIGH>;
 	status = "disabled";
 };
 
 /* On-module PCIe USB Bridge */
-&pcie2_ep {
+&pcie2_rc {
 	num-lanes = <1>;
-	phys = <&serdes1_pcie2_1l_link>;
 	phy-names = "pcie-phy";
+	phys = <&serdes1_pcie2_1l_link>;
+	reset-gpios = <&som_gpio_expander 3 GPIO_ACTIVE_HIGH>;
 	status = "okay";
 };
 
 /* PCIE for On-module Wi-Fi */
-&pcie3_ep {
+&pcie3_rc {
 	num-lanes = <1>;
-	phys = <&serdes0_pcie3_1l_link>;
 	phy-names = "pcie-phy";
+	phys = <&serdes0_pcie3_1l_link>;
+	reset-gpios = <&som_gpio_expander 4 GPIO_ACTIVE_HIGH>;
 	status = "okay";
 };
 

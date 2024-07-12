@@ -411,8 +411,8 @@ void icssg_ft1_set_mac_addr(struct regmap *miig_rt, int slice, u8 *mac_addr);
 void icssg_config_ipg(struct prueth_emac *emac);
 int icssg_config(struct prueth *prueth, struct prueth_emac *emac,
 		 int slice);
-int emac_set_port_state(struct prueth_emac *emac,
-			enum icssg_port_state_cmd state);
+int icssg_set_port_state(struct prueth_emac *emac,
+			 enum icssg_port_state_cmd state);
 void icssg_config_set_speed(struct prueth_emac *emac);
 void icssg_config_half_duplex(struct prueth_emac *emac);
 
@@ -435,7 +435,7 @@ int emac_fdb_flow_id_updated(struct prueth_emac *emac);
 #define prueth_napi_to_tx_chn(pnapi) \
 	container_of(pnapi, struct prueth_tx_chn, napi_tx)
 
-void emac_stats_work_handler(struct work_struct *work);
+void icssg_stats_work_handler(struct work_struct *work);
 void emac_update_hardware_stats(struct prueth_emac *emac);
 int emac_get_stat_by_name(struct prueth_emac *emac, char *stat_name);
 
@@ -462,11 +462,11 @@ int prueth_dma_rx_push_mapped(struct prueth_emac *emac,
 			      struct page *page, u32 buf_len);
 void emac_rx_timestamp(struct prueth_emac *emac,
 		       struct sk_buff *skb, u32 *psdata);
-enum netdev_tx emac_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev);
+enum netdev_tx icssg_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev);
 irqreturn_t prueth_rx_irq(int irq, void *dev_id);
 void prueth_emac_stop(struct prueth_emac *emac);
 void prueth_cleanup_tx_ts(struct prueth_emac *emac);
-int emac_napi_rx_poll(struct napi_struct *napi_rx, int budget);
+int icssg_napi_rx_poll(struct napi_struct *napi_rx, int budget);
 int prueth_prepare_rx_chan(struct prueth_emac *emac,
 			   struct prueth_rx_chn *chn,
 			   int buf_size);
@@ -474,12 +474,12 @@ void prueth_reset_tx_chan(struct prueth_emac *emac, int ch_num,
 			  bool free_skb);
 void prueth_reset_rx_chan(struct prueth_rx_chn *chn,
 			  int num_flows, bool disable);
-void emac_ndo_tx_timeout(struct net_device *ndev, unsigned int txqueue);
-int emac_ndo_ioctl(struct net_device *ndev, struct ifreq *ifr, int cmd);
-void emac_ndo_get_stats64(struct net_device *ndev,
-			  struct rtnl_link_stats64 *stats);
-int emac_ndo_get_phys_port_name(struct net_device *ndev, char *name,
-				size_t len);
+void icssg_ndo_tx_timeout(struct net_device *ndev, unsigned int txqueue);
+int icssg_ndo_ioctl(struct net_device *ndev, struct ifreq *ifr, int cmd);
+void icssg_ndo_get_stats64(struct net_device *ndev,
+			   struct rtnl_link_stats64 *stats);
+int icssg_ndo_get_phys_port_name(struct net_device *ndev, char *name,
+				 size_t len);
 int prueth_node_port(struct device_node *eth_node);
 int prueth_node_mac(struct device_node *eth_node);
 void prueth_netdev_exit(struct prueth *prueth,

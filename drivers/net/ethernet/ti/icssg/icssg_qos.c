@@ -108,15 +108,15 @@ static int tas_set_state(struct prueth_emac *emac, enum tas_state state)
 	switch (state) {
 	case TAS_STATE_RESET:
 		tas_reset(emac);
-		ret = emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_RESET);
+		ret = icssg_set_port_state(emac, ICSSG_EMAC_PORT_TAS_RESET);
 		tas->state = TAS_STATE_RESET;
 		break;
 	case TAS_STATE_ENABLE:
-		ret = emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_ENABLE);
+		ret = icssg_set_port_state(emac, ICSSG_EMAC_PORT_TAS_ENABLE);
 		tas->state = TAS_STATE_ENABLE;
 		break;
 	case TAS_STATE_DISABLE:
-		ret = emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_DISABLE);
+		ret = icssg_set_port_state(emac, ICSSG_EMAC_PORT_TAS_DISABLE);
 		tas->state = TAS_STATE_DISABLE;
 		break;
 	default:
@@ -171,7 +171,7 @@ static int tas_set_trigger_list_change(struct prueth_emac *emac)
 	/* config_pending cleared by f/w when new shadow list is copied to active list */
 	writeb(1, &tas->config_list->config_pending);
 
-	return emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_TRIGGER);
+	return icssg_set_port_state(emac, ICSSG_EMAC_PORT_TAS_TRIGGER);
 }
 
 static int tas_update_oper_list(struct prueth_emac *emac)
@@ -362,7 +362,7 @@ static int icssg_config_ietfpe(struct prueth_qos_iet *iet, bool enable)
 	}
 
 	/* Send command to enable FPE Tx side. Rx is always enabled */
-	ret = emac_set_port_state(iet->emac,
+	ret = icssg_set_port_state(iet->emac,
 				  enable ? ICSSG_EMAC_PORT_PREMPT_TX_ENABLE :
 					   ICSSG_EMAC_PORT_PREMPT_TX_DISABLE);
 	if (ret) {

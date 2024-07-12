@@ -370,3 +370,4 @@ const struct ethtool_ops icssg_ethtool_ops = {
 	.set_mm = emac_set_mm,
 	.get_mm_stats = emac_get_mm_stats,
 };
+EXPORT_SYMBOL_GPL(icssg_ethtool_ops);

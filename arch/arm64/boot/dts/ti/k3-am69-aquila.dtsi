@@ -1087,18 +1087,18 @@
 	};
 };
 
-/* Aquila ETH_2 MDIO */
-&main_cpsw0_mdio {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_main_mdio0>;
-};
-
 /* Aquila ETH_2 SGMII PHY */
 &main_cpsw0_port2 {
 	phy-mode = "sgmii";
 	phys = <&cpsw0_phy_gmii_sel 2>, <&serdes1_sgmii_link>;
 	phy-names = "mac", "serdes";
 	status = "disabled";
+};
+
+/* Aquila ETH_2 MDIO */
+&main_cpsw1_mdio {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_mdio0>;
 };
 
 /* Aquila PWM_1 */

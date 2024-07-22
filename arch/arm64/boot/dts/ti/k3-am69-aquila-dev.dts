@@ -74,8 +74,19 @@
 	status = "okay";
 };
 
+/* Aquila ETH_2 */
+&main_cpsw0 {
+	status = "okay";
+};
+
+/* Aquila ETH_2 SGMII PHY */
+&main_cpsw0_port2 {
+	phy-handle = <&cpsw0_port2_phy4>;
+	status = "okay";
+};
+
 /* Aquila ETH_2 MDIO */
-&main_cpsw0_mdio {
+&eth2_mdio_gpio {
 	status = "okay";
 
 	cpsw0_port2_phy4: ethernet-phy@4 {
@@ -85,12 +96,6 @@
 		interrupt-parent = <&main_gpio0>;
 		interrupts = <44 IRQ_TYPE_EDGE_FALLING>;
 	};
-};
-
-/* Aquila ETH_2 SGMII PHY */
-&main_cpsw0_port2 {
-	phy-handle = <&cpsw0_port2_phy4>;
-	status = "okay";
 };
 
 /* Aquila PWM_1 */

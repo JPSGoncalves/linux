@@ -87,6 +87,18 @@
 		timeout-ms = <3000>;
 	};
 
+	/* Aquila ETH_2 MDIO (GPIO bit-banging) */
+	eth2_mdio_gpio: mdio {
+		compatible = "virtual,mdio-gpio";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_eth2_mdc>, <&pinctrl_eth2_mdio>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		gpios = <&main_gpio0 48 GPIO_ACTIVE_HIGH>, /* MDC */
+			<&main_gpio0 47 GPIO_ACTIVE_HIGH>; /* MDIO */
+		status = "disabled";
+	};
+
 	memory@80000000 {
 		device_type = "memory";
 		/* 32G RAM */
@@ -518,6 +530,20 @@
 	pinctrl_eth2_int: main-gpio0-44-default-pins {
 		pinctrl-single,pins = <
 			J784S4_IOPAD(0x0b0, PIN_INPUT_PULLUP, 7) /* (AL33) MCASP1_AXR3.GPIO0_44 */ /* AQUILA B81 */
+		>;
+	};
+
+	/* Aquila ETH_2_MDIO as GPIO */
+	pinctrl_eth2_mdio: main-gpio0-47-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x0bc, PIN_INPUT, 7)  /* (AD33) MCASP1_AFSX.GPIO0_47 */ /* AQUILA B89 */
+		>;
+	};
+
+	/* Aquila ETH_2_MDC as GPIO */
+	pinctrl_eth2_mdc: main-gpio0-48-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x0c0, PIN_INPUT, 7) /* (AD38) MCASP1_AXR0.GPIO0_48 */ /* AQUILA B90 */
 		>;
 	};
 

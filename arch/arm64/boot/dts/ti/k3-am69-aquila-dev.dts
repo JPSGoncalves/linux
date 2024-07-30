@@ -19,6 +19,13 @@
 		     "toradex,aquila-am69",
 		     "ti,j784s4";
 
+	reg_1v8_sw: regulator-1v8-sw {
+		compatible = "regulator-fixed";
+		regulator-max-microvolt = <1800000>;
+		regulator-min-microvolt = <1800000>;
+		regulator-name = "Carrier_1V8";
+	};
+
 	reg_3v3_dp: regulator-3v3-dp {
 		compatible = "regulator-fixed";
 		pinctrl-names = "default";
@@ -42,6 +49,35 @@
 			dp0_connector_in: endpoint {
 				remote-endpoint = <&dp0_out>;
 			};
+		};
+	};
+
+	sound {
+		compatible = "simple-audio-card";
+		simple-audio-card,bitclock-master = <&codec_dai>;
+		simple-audio-card,format = "i2s";
+		simple-audio-card,frame-master = <&codec_dai>;
+		simple-audio-card,name = "aquila-wm8904";
+		simple-audio-card,mclk-fs = <256>;
+		simple-audio-card,routing =
+			"Headphone Jack", "HPOUTL",
+			"Headphone Jack", "HPOUTR",
+			"IN2L", "Line In Jack",
+			"IN2R", "Line In Jack",
+			"Headphone Jack", "MICBIAS",
+			"IN1L", "Headphone Jack";
+		simple-audio-card,widgets =
+			"Microphone", "Headphone Jack",
+			"Headphone", "Headphone Jack",
+			"Line", "Line In Jack";
+
+
+		codec_dai: simple-audio-card,codec {
+			sound-dai = <&wm8904_1a>;
+		};
+
+		simple-audio-card,cpu {
+			sound-dai = <&mcasp4>;
 		};
 	};
 };
@@ -180,6 +216,11 @@
 	status = "okay";
 };
 
+/* Aquila I2S_1 */
+&mcasp4 {
+	status = "okay";
+};
+
 &mcu_cpsw {
 	status = "okay";
 };
@@ -198,6 +239,22 @@
 	fan@18 {
 		compatible = "ti,amc6821";
 		reg = <0x18>;
+	};
+
+	/* Audio Codec */
+	wm8904_1a: audio-codec@1a {
+		compatible = "wlf,wm8904";
+		reg = <0x1a>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_audio_extrefclk1>;
+		#sound-dai-cells = <0>;
+		clocks = <&audio_refclk1>;
+		clock-names = "mclk";
+		AVDD-supply = <&reg_1v8_sw>;
+		CPVDD-supply = <&reg_1v8_sw>;
+		DBVDD-supply = <&reg_1v8_sw>;
+		DCVDD-supply = <&reg_1v8_sw>;
+		MICVDD-supply = <&reg_1v8_sw>;
 	};
 
 	/* Current measurement into module VCC */

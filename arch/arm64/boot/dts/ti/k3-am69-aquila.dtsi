@@ -593,6 +593,13 @@
 			>;
 	};
 
+	/* Aquila I2S_1_MCLK */
+	pinctrl_audio_extrefclk1: audio-extrefclk1-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x078, PIN_OUTPUT, 1) /* (AH37) MCAN2_RX.AUDIO_EXT_REFCLK1 */ /* AQUILA B24 */
+		>;
+	};
+
 	/* Aquila CAN_1 */
 	pinctrl_main_mcan10: main-mcan10-default-pins {
 		pinctrl-single,pins = <
@@ -606,6 +613,16 @@
 		pinctrl-single,pins = <
 			J784S4_IOPAD(0x010, PIN_INPUT, 0)  /* (AH33) MCAN13_RX */ /* AQUILA B54 */
 			J784S4_IOPAD(0x00c, PIN_OUTPUT, 0) /* (AF33) MCAN13_TX */ /* AQUILA B53 */
+		>;
+	};
+
+	/* Aquila I2S_1 */
+	pinctrl_main_mcasp4: main-mcasp4-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x0c8, PIN_INPUT, 1)  /* (AJ32) EXT_REFCLK1.MCASP4_ACLKX      */ /* AQUILA B20 */
+			J784S4_IOPAD(0x06c, PIN_INPUT, 1)  /* (AJ37) MCAN1_TX.MCASP4_AFSX          */ /* AQUILA B21 */
+			J784S4_IOPAD(0x068, PIN_OUTPUT, 1) /* (AE38) MCAN0_RX.MCASP4_AXR1          */ /* AQUILA B22 */
+			J784S4_IOPAD(0x0c4, PIN_INPUT, 1)  /* (AD36) ECAP0_IN_APWM_OUT.MCASP4_AXR2 */ /* AQUILA B23 */
 		>;
 	};
 
@@ -1030,6 +1047,11 @@
 	};
 };
 
+/* Aquila I2S_1_MCLK */
+&audio_refclk1 {
+	assigned-clock-rates = <24576000>;
+};
+
 &c71_0 {
 	mboxes = <&mailbox0_cluster4 &mbox_c71_0>;
 	memory-region = <&c71_0_dma_memory_region>,
@@ -1444,6 +1466,22 @@
 &main_uart8 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_main_uart8>;
+	status = "disabled";
+};
+
+/* Aquila I2S_1 */
+&mcasp4 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_main_mcasp4>;
+	op-mode = <0>;  /* MCASP_I2S_MODE */
+	serial-dir = <	/* 0: INACTIVE, 1: TX, 2: RX */
+		0 1 2 0
+		0 0 0 0
+		0 0 0 0
+		0 0 0 0
+	>;
+	tdm-slots = <2>;
+	#sound-dai-cells = <0>;
 	status = "disabled";
 };
 

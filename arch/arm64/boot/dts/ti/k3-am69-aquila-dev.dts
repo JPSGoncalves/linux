@@ -283,8 +283,12 @@
 			compatible = "usb-c-connector";
 			data-role = "dual";
 			label = "USB-C OTG";
-			power-role = "source";
+			power-role = "dual";
+			try-power-role = "sink";
+			self-powered;
 			source-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
+			sink-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
+			op-sink-microwatt = <1000000>;
 
 			ports {
 				#address-cells = <1>;

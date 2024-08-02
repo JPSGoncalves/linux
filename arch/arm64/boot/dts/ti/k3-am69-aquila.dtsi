@@ -429,6 +429,13 @@
 		>;
 	};
 
+	/* Aquila USB_1_EN */
+	pinctrl_usb1_en_gpio: main-gpio0-11-default-pins {
+		pinctrl-single,pins = <
+			J784S4_IOPAD(0x02c, PIN_INPUT, 7) /* (AL32) GPIO0_11 */ /* AQUILA B77 */
+		>;
+	};
+
 	/* Aquila GPIO_17_DSI_1 */
 	pinctrl_gpio_17_dsi_1: main-gpio0-12-default-pins {
 		pinctrl-single,pins = <
@@ -695,13 +702,6 @@
 		pinctrl-single,pins = <
 			J784S4_IOPAD(0x038, PIN_INPUT, 11)  /* (AK35) MCASP0_ACLKX.UART8_RXD */ /* AQUILA D19 */
 			J784S4_IOPAD(0x03c, PIN_OUTPUT, 11) /* (AK38) MCASP0_AFSX.UART8_TXD  */ /* AQUILA D20 */
-		>;
-	};
-
-	/* Aquila USB_1_EN */
-	pinctrl_main_usb0ss: main-usb0ss-default-pins {
-		pinctrl-single,pins = <
-			J784S4_IOPAD(0x02c, PIN_INPUT, 14) /* (AL32) GPIO0_11.USB0_DRVVBUS */ /* AQUILA B77 */
 		>;
 	};
 };
@@ -1761,8 +1761,6 @@
 };
 
 &usbss0 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_main_usb0ss>;
 	ti,vbus-divider;
 	status = "disabled";
 };

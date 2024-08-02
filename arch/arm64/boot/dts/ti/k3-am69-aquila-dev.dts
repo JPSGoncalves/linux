@@ -158,7 +158,16 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_gpio_01>,  /* Aquila GPIO_01 */
 		    <&pinctrl_gpio_02>,  /* Aquila GPIO_02 */
-		    <&pinctrl_gpio_03>;  /* Aquila GPIO_03 */
+		    <&pinctrl_gpio_03>,  /* Aquila GPIO_03 */
+		    <&pinctrl_usb1_en_gpio>;
+
+	/* USB_1_EN Driven by Power Delivery IC - must be driven high */
+	usb1en-hog {
+		gpio-hog;
+		gpios = <11 GPIO_ACTIVE_HIGH>;
+		output-high;
+		line-name = "USB_1_EN";
+	};
 };
 
 /* Aquila I2C_3_DSI1 */

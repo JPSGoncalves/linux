@@ -1753,6 +1753,7 @@
 	phy-names = "cdns3,usb3-phy";
 	dr_mode = "otg";
 	maximum-speed = "super-speed";
+	usb-role-switch;
 	status = "disabled";
 };
 

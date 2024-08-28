@@ -1702,6 +1702,7 @@
 
 &serdes_refclk {
 	clock-frequency = <100000000>;
+	status = "okay";
 };
 
 &serdes_ln_ctrl {

@@ -1611,6 +1611,22 @@
 	phys = <&serdes1_pcie2_1l_link>;
 	reset-gpios = <&som_gpio_expander 3 GPIO_ACTIVE_HIGH>;
 	status = "okay";
+
+	pci@0,0 {
+		device_type = "pci";
+		reg = <0x0 0x0 0x0 0x0 0x0>;
+
+		#address-cells = <3>;
+		#size-cells = <2>;
+		ranges;
+
+		usb@0 {
+			compatible = "pci104C,8241";
+			reg = <0x0 0x0 0x0 0x0 0x0>;
+
+			ti,tusb7320-pwron-active-high;
+		};
+	};
 };
 
 /* PCIE for On-module Wi-Fi */

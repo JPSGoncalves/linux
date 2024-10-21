@@ -1639,7 +1639,6 @@
 };
 
 &serdes0 {
-	assigned-clock-parents = <&serdes_refclk>, <&serdes_refclk>, <&serdes_refclk>;
 	status = "okay";
 
 	/* Aquila PCIE_2 */
@@ -1671,7 +1670,6 @@
 };
 
 &serdes1 {
-	assigned-clock-parents = <&serdes_refclk>, <&serdes_refclk>, <&serdes_refclk>;
 	status = "okay";
 
 	/* Aquila PCIE_1 */

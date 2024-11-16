@@ -51,6 +51,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am62p5-sk.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am62p5-sk-dsi-rpi-7inch-panel.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am62p5-sk-dss-shared-mode.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am62p5-sk-eqep.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am62p5-sk-ethfw.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am62p5-sk-m2-cc3301.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am62p5-sk-mcan.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am62p5-sk-microtips-mf070zima-lcd3.dtbo
@@ -79,6 +80,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am642-evm-nand.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am642-evm-icssg1-dualemac.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am642-evm-icssg1-dualemac-mii.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am642-evm-pcie0-ep.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am642-evm-sk-cpsw3g-pps.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am642-phyboard-electra-rdk.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am642-sk.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am642-sk-pwm.dtbo
@@ -230,6 +232,8 @@ k3-am62p5-sk-dsi-rpi-7inch-panel-dtbs := k3-am62p5-sk.dtb \
 	k3-am62p5-sk-dsi-rpi-7inch-panel.dtbo
 k3-am62p5-sk-dss-shared-mode-dtbs := k3-am62p5-sk.dtb \
 	k3-am62p5-sk-dss-shared-mode.dtbo
+k3-am62p5-sk-ethfw-dtbs := k3-am62p5-sk.dtb \
+	k3-am62p5-sk-ethfw.dtbo
 k3-am62p5-sk-microtips-mf070zima-lcd3-dtbs := k3-am62p5-sk.dtb \
 	k3-am62p5-sk-microtips-mf070zima-lcd3.dtbo
 k3-am62p5-sk-microtips-mf101hie-panel-dtbs := k3-am62p5-sk.dtb \
@@ -242,6 +246,10 @@ k3-am642-evm-icssg1-dualemac-mii-dtbs := \
 	k3-am642-evm.dtb k3-am642-evm-icssg1-dualemac-mii.dtbo
 k3-am642-evm-pcie0-ep-dtbs := \
 	k3-am642-evm.dtb k3-am642-evm-pcie0-ep.dtbo
+k3-am642-evm-cpsw3g-pps.dtbs := \
+	k3-am642-evm.dtb k3-am642-evm-sk-cpsw3g-pps.dtbo
+k3-am642-sk-cpsw3g-pps.dtbs := \
+	k3-am642-sk.dtb k3-am642-evm-sk-cpsw3g-pps.dtbo
 k3-am642-tqma64xxl-mbax4xxl-sdcard-dtbs := \
 	k3-am642-tqma64xxl-mbax4xxl.dtb k3-am64-tqma64xxl-mbax4xxl-sdcard.dtbo
 k3-am642-tqma64xxl-mbax4xxl-wlan-dtbs := \
@@ -321,6 +329,7 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
 	k3-am62p5-sk-csi2-tevi-ov5640.dtb \
 	k3-am62p5-sk-dsi-rpi-7inch-panel.dtb \
 	k3-am62p5-sk-dss-shared-mode.dtb \
+	k3-am62p5-sk-ethfw.dtb \
 	k3-am62p5-sk-fastboot-disable-hdmi.dtb \
 	k3-am62p5-sk-microtips-mf070zima-lcd3.dtb \
 	k3-am62p5-sk-microtips-mf101hie-panel.dtb \
@@ -328,6 +337,8 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
 	k3-am642-evm-icssg1-dualemac.dtb \
 	k3-am642-evm-icssg1-dualemac-mii.dtb \
 	k3-am642-evm-pcie0-ep.dtb \
+	k3-am642-evm-cpsw3g-pps.dtb \
+	k3-am642-sk-cpsw3g-pps.dtb \
 	k3-am642-tqma64xxl-mbax4xxl-sdcard.dtb \
 	k3-am642-tqma64xxl-mbax4xxl-wlan.dtb \
 	k3-am654-base-board-toshiba-tc358867-evm.dtb \

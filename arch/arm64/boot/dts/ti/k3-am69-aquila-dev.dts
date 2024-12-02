@@ -19,6 +19,10 @@
 		     "toradex,aquila-am69",
 		     "ti,j784s4";
 
+	aliases {
+		eeprom1 = &carrier_eeprom;
+	};
+
 	reg_1v8_sw: regulator-1v8-sw {
 		compatible = "regulator-fixed";
 		regulator-max-microvolt = <1800000>;
@@ -323,7 +327,7 @@
 	};
 
 	/* EEPROM */
-	eeprom@57 {
+	carrier_eeprom: eeprom@57 {
 		compatible = "st,24c02", "atmel,24c02";
 		reg = <0x57>;
 		pagesize = <16>;

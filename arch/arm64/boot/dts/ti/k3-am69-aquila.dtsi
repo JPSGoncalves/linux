@@ -23,6 +23,7 @@
 		can1 = &mcu_mcan0;
 		can2 = &main_mcan13;
 		can3 = &mcu_mcan1;
+		eeprom0 = &som_eeprom;
 		ethernet0 = &mcu_cpsw_port1;
 		ethernet1 = &main_cpsw0_port2;
 		i2c0 = &wkup_i2c0;
@@ -2018,7 +2019,7 @@
 		reg = <0x4f>;
 	};
 
-	eeprom@50 {
+	som_eeprom: eeprom@50 {
 		compatible = "st,24c02", "atmel,24c02";
 		pagesize = <16>;
 		reg = <0x50>;

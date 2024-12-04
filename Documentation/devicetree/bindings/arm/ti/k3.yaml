@@ -144,8 +144,10 @@ properties:
 
       - description: K3 AM69 SoC Toradex Aquila Modules and Carrier Boards
         items:
-          - const: toradex,aquila-am69-dev      # Aquila AM69 Module on Aquila Development Board
-          - const: toradex,aquila-am69          # Aquila AM69 Module
+          - enum:
+              - toradex,aquila-am69-clover   # Aquila AM69 Module on Clover Board
+              - toradex,aquila-am69-dev      # Aquila AM69 Module on Aquila Development Board
+          - const: toradex,aquila-am69       # Aquila AM69 Module
           - const: ti,j784s4
 
 additionalProperties: true

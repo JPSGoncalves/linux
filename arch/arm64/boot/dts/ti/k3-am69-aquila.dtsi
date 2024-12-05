@@ -1642,10 +1642,9 @@
 		ranges;
 
 		usb@0 {
-			compatible = "pci104C,8241";
+			compatible = "pci104c,8241";
 			reg = <0x0 0x0 0x0 0x0 0x0>;
-
-			ti,tusb7320-pwron-active-high;
+			ti,pwron-active-high;
 		};
 	};
 };

@@ -1,0 +1,347 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/*
+ * Copyright 2025 Toradex
+ *
+ * Common dtsi for Verdin AM62P SoM
+ *
+ * https://www.toradex.com/computer-on-modules/verdin-arm-family/ti-am62p
+ */
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+#include <dt-bindings/net/ti-dp83867.h>
+
+/ {
+	aliases {
+		ethernet0 = &cpsw_port1;
+		mmc0 = &sdhci0;
+		serial2 = &main_uart0;
+		usb0 = &usb0;
+	};
+
+	chosen {
+		stdout-path = "serial2:115200n8";
+	};
+
+	connector {
+		compatible = "gpio-usb-b-connector", "usb-b-connector";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_usb0_id>;
+		id-gpios = <&main_gpio0 31 GPIO_ACTIVE_HIGH>;
+		label = "USB_1";
+		self-powered;
+		vbus-supply = <&reg_usb0_vbus>;
+
+		port {
+			usb_dr_connector: endpoint {
+				remote-endpoint = <&usb0_ep>;
+			};
+		};
+	};
+
+	memory@80000000 {
+		/* 8G RAM */
+		reg = <0x00000000 0x80000000 0x00000000 0x80000000>,
+		      <0x00000008 0x80000000 0x00000001 0x80000000>;
+		device_type = "memory";
+	};
+
+	reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		secure_tfa_ddr: tfa@9e780000 {
+			reg = <0x00 0x9e780000 0x00 0x80000>;
+			no-map;
+		};
+
+		secure_ddr: optee@9e800000 {
+			reg = <0x00 0x9e800000 0x00 0x01800000>; /* for OP-TEE */
+			no-map;
+		};
+
+		wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0x9c900000 0x00 0x01e00000>;
+			no-map;
+		};
+	};
+
+	opp-table {
+		/* Requires VDD_CORE at 0v85 */
+		opp-1400000000 {
+			opp-hz = /bits/ 64 <1400000000>;
+			opp-supported-hw = <0x01 0x0004>;
+			clock-latency-ns = <6000000>;
+		};
+	};
+
+	reg_usb0_vbus: regulator-usb0-vbus {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_usb0_en>;
+		enable-active-high;
+		/* Verdin USB_1_EN (SODIMM 155) */
+		gpio = <&main_gpio1 50 GPIO_ACTIVE_HIGH>;
+		regulator-max-microvolt = <5000000>;
+		regulator-min-microvolt = <5000000>;
+		regulator-name = "USB_1_EN";
+	};
+
+	/* Module Power Supply */
+	reg_vsodimm: regulator-vsodimm {
+		compatible = "regulator-fixed";
+		regulator-name = "+V_SODIMM";
+	};
+};
+
+&main_pmx0 {
+	/* MDIO, shared by Verdin ETH_1 (On-module PHY) and Verdin ETH_2_RGMII */
+	pinctrl_mdio: mdio0-default-pins {
+		pinctrl-single,pins = <
+			AM62PX_IOPAD(0x0160, PIN_OUTPUT, 0) /* (F17) MDIO0_MDC  */ /* SODIMM 193 */
+			AM62PX_IOPAD(0x015c, PIN_INPUT,  0) /* (F16) MDIO0_MDIO */ /* SODIMM 191 */
+		>;
+	};
+
+	/* Verdin USB_1_ID */
+	pinctrl_usb0_id: main-gpio0-31-default-pins {
+		pinctrl-single,pins = <
+			AM62PX_IOPAD(0x007c, PIN_INPUT, 7) /* (Y25) GPMC0_CLK.GPIO0_31 */ /* SODIMM 161 */
+		>;
+	};
+
+	pinctrl_eth_int: main-gpio0-36-default-pins {
+		pinctrl-single,pins = <
+			AM62PX_IOPAD(0x0094, PIN_INPUT, 7) /* (T24) GPMC0_BE1n.GPIO0_36 */ /* ETH_INT# */
+		>;
+	};
+
+	/* Verdin USB_1_EN */
+	pinctrl_usb0_en: main-gpio1-50-default-pins {
+		pinctrl-single,pins = <
+			AM62PX_IOPAD(0x0254, PIN_INPUT, 7) /* (G22) USB0_DRVVBUS.GPIO1_50 */ /* SODIMM 155 */
+		>;
+	};
+
+	/* Verdin ETH_1 RGMII (On-module PHY) */
+	pinctrl_rgmii1: main-rgmii1-default-pins {
+		pinctrl-single,pins = <
+			AM62PX_IOPAD(0x014c, PIN_INPUT, 0) /* (B15) RGMII1_RD0    */ /* RGMII_RXD0   */
+			AM62PX_IOPAD(0x0150, PIN_INPUT, 0) /* (B16) RGMII1_RD1    */ /* RGMII_RXD1   */
+			AM62PX_IOPAD(0x0154, PIN_INPUT, 0) /* (A14) RGMII1_RD2    */ /* RGMII_RXD2   */
+			AM62PX_IOPAD(0x0158, PIN_INPUT, 0) /* (B14) RGMII1_RD3    */ /* RGMII_RXD3   */
+			AM62PX_IOPAD(0x0148, PIN_INPUT, 0) /* (A16) RGMII1_RXC    */ /* RGMII_RXC    */
+			AM62PX_IOPAD(0x0144, PIN_INPUT, 0) /* (A15) RGMII1_RX_CTL */ /* RGMII_RX_CTL */
+			AM62PX_IOPAD(0x0134, PIN_INPUT, 0) /* (A18) RGMII1_TD0    */ /* RGMII_TXD0   */
+			AM62PX_IOPAD(0x0138, PIN_INPUT, 0) /* (C17) RGMII1_TD1    */ /* RGMII_TXD1   */
+			AM62PX_IOPAD(0x013c, PIN_INPUT, 0) /* (A17) RGMII1_TD2    */ /* RGMII_TXD2   */
+			AM62PX_IOPAD(0x0140, PIN_INPUT, 0) /* (C16) RGMII1_TD3    */ /* RGMII_TXD3   */
+			AM62PX_IOPAD(0x0130, PIN_INPUT, 0) /* (B17) RGMII1_TXC    */ /* RGMII_TXC    */
+			AM62PX_IOPAD(0x012c, PIN_INPUT, 0) /* (B18) RGMII1_TX_CTL */ /* RGMII_TX_CTL */
+		>;
+	};
+
+	/* Verdin UART_3, used as the Linux console */
+	pinctrl_uart0: main-uart0-default-pins {
+		pinctrl-single,pins = <
+			AM62PX_IOPAD(0x1c8, PIN_INPUT,  0) /* (A22) UART0_RXD */ /* SODIMM 147 */
+			AM62PX_IOPAD(0x1cc, PIN_OUTPUT, 0) /* (B22) UART0_TXD */ /* SODIMM 149 */
+		>;
+	};
+
+	pinctrl_eth_clock: main-system-clkout0-default-pins {
+		pinctrl-single,pins = <
+			AM62PX_IOPAD(0x01f0, PIN_OUTPUT_PULLUP, 5) /* (C25) EXT_REFCLK1.CLKOUT0 */ /* ETH_25MHz_CLK */
+		>;
+	};
+
+	pinctrl_pmic_extint: main-system-extint-default-pins {
+		pinctrl-single,pins = <
+			AM62PX_IOPAD(0x01f4, PIN_INPUT, 0) /* (C23) EXTINTn */ /* PMIC_EXTINT# */
+		>;
+	};
+};
+
+&mcu_pmx0 {
+	/* On-module I2C - PMIC_I2C */
+	pinctrl_wkup_i2c0: wkup-i2c0-default-pins {
+		pinctrl-single,pins = <
+			AM62PX_MCU_IOPAD(0x004c, PIN_INPUT, 0) /* (A13) WKUP_I2C0_SCL */ /* PMIC_I2C_SCL */
+			AM62PX_MCU_IOPAD(0x0050, PIN_INPUT, 0) /* (C11) WKUP_I2C0_SDA */ /* PMIC_I2C_SDA */
+		>;
+	};
+};
+
+&cpsw3g {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_rgmii1>;
+	status = "disabled";
+};
+
+/* MDIO, shared by Verdin ETH_1 (On-module PHY) and Verdin ETH_2_RGMII */
+&cpsw3g_mdio {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_mdio>, <&pinctrl_eth_clock>;
+	assigned-clocks = <&k3_clks 157 36>;
+	assigned-clock-parents = <&k3_clks 157 38>;
+	assigned-clock-rates = <25000000>;
+	status = "disabled";
+
+	som_eth_phy: ethernet-phy@0 {
+		reg = <0>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_eth_int>;
+		interrupt-parent = <&main_gpio0>;
+		interrupts = <36 IRQ_TYPE_EDGE_FALLING>;
+		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
+		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
+	};
+};
+
+/* Verdin ETH_1 (On-module PHY) */
+&cpsw_port1 {
+	phy-handle = <&som_eth_phy>;
+	phy-mode = "rgmii-rxid";
+	status = "disabled";
+};
+
+&mailbox0_cluster0 {
+	status = "okay";
+
+	mbox_r5_0: mbox-r5-0 {
+		ti,mbox-rx = <0 0 0>;
+		ti,mbox-tx = <1 0 0>;
+	};
+};
+
+&mailbox0_cluster1 {
+	status = "okay";
+
+	mbox_mcu_r5_0: mbox-mcu-r5-0 {
+		ti,mbox-rx = <0 0 0>;
+		ti,mbox-tx = <1 0 0>;
+	};
+};
+
+/* Verdin UART_3, used as the Linux console */
+&main_uart0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart0>;
+	status = "disabled";
+};
+
+/* On-module eMMC */
+&sdhci0 {
+	no-mmc-hs400;
+	non-removable;
+	ti,driver-strength-ohm = <50>;
+	status = "okay";
+};
+
+/* Verdin USB_1 */
+&usbss0 {
+	ti,vbus-divider;
+	status = "disabled";
+};
+
+&usb0 {
+	adp-disable;
+	usb-role-switch;
+	status = "disabled";
+
+	port {
+		usb0_ep: endpoint {
+			remote-endpoint = <&usb_dr_connector>;
+		};
+	};
+};
+
+/* On-module I2C - PMIC_I2C */
+&wkup_i2c0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_wkup_i2c0>;
+	clock-frequency = <400000>;
+	status = "okay";
+
+	som_gpio_expander: gpio@21 {
+		compatible = "nxp,pcal6408";
+		reg = <0x21>;
+		#gpio-cells = <2>;
+		gpio-controller;
+		gpio-line-names = "SODIMM_256";
+	};
+
+	pmic@30 {
+		compatible = "ti,tps65219";
+		reg = <0x30>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_pmic_extint>;
+		interrupt-parent = <&gic500>;
+		interrupts = <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
+
+		buck1-supply = <&reg_vsodimm>;
+		buck2-supply = <&reg_vsodimm>;
+		buck3-supply = <&reg_vsodimm>;
+		ldo1-supply = <&reg_3v3>;
+		ldo2-supply = <&reg_1v8>;
+		ldo3-supply = <&reg_3v3>;
+		ldo4-supply = <&reg_3v3>;
+		system-power-controller;
+		ti,power-button;
+
+		regulators {
+			reg_3v3: buck1 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-max-microvolt = <3300000>;
+				regulator-min-microvolt = <3300000>;
+				regulator-name = "+V3.3_PMIC (PMIC BUCK1)";
+			};
+
+			reg_1v8: buck2 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-max-microvolt = <1800000>;
+				regulator-min-microvolt = <1800000>;
+				regulator-name = "+V1.8 (PMIC BUCK2)"; /* On-module and SODIMM 214 */
+			};
+
+			buck3 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-max-microvolt = <1100000>;
+				regulator-min-microvolt = <1100000>;
+				regulator-name = "+VDD_DDR (PMIC BUCK3)";
+			};
+
+			reg_sd_3v3_1v8: ldo1 {
+				regulator-allow-bypass;
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-max-microvolt = <3300000>;
+				regulator-min-microvolt = <3300000>;
+				regulator-name = "+V3.3_1.8_SD (PMIC LDO1)";
+			};
+
+			ldo3 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-max-microvolt = <1800000>;
+				regulator-min-microvolt = <1800000>;
+				regulator-name = "+V1.8A (PMIC LDO3)";
+			};
+
+			ldo4 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-max-microvolt = <2500000>;
+				regulator-min-microvolt = <2500000>;
+				regulator-name = "+V2.5_ETH (PMIC LDO4)";
+			};
+		};
+	};
+};
+

@@ -1,0 +1,8 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/*
+ * Copyright 2025 Toradex
+ *
+ * Common dtsi for Verdin AM62P SoM WB variant
+ *
+ * https://www.toradex.com/computer-on-modules/verdin-arm-family/ti-am62p
+ */

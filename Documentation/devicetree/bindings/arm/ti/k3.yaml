@@ -67,6 +67,22 @@ properties:
           - const: toradex,verdin-am62          # Verdin AM62 Module
           - const: ti,am625
 
+      - description: K3 AM62P5 SoC Toradex Verdin Modules and Carrier Boards
+        items:
+          - enum:
+              - toradex,verdin-am62p-nonwifi-dev    # Verdin AM62P Module on Verdin Development Board
+          - const: toradex,verdin-am62p-nonwifi     # Verdin AM62P Module without Wi-Fi / BT
+          - const: toradex,verdin-am62p             # Verdin AM62P Module
+          - const: ti,am62p5
+
+      - description: K3 AM62P5 SoC Toradex Verdin Modules and Carrier Boards with Wi-Fi / BT
+        items:
+          - enum:
+              - toradex,verdin-am62p-wifi-dev    # Verdin AM62P Wi-Fi / BT M. on Verdin Development B.
+          - const: toradex,verdin-am62p-wifi     # Verdin AM62P Wi-Fi / BT Module
+          - const: toradex,verdin-am62p          # Verdin AM62P Module
+          - const: ti,am62p5
+
       - description: K3 AM642 SoC
         items:
           - enum:

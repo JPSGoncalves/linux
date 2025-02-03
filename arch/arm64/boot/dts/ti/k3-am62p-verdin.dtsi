@@ -298,7 +298,7 @@
 				regulator-boot-on;
 				regulator-max-microvolt = <3300000>;
 				regulator-min-microvolt = <3300000>;
-				regulator-name = "+V3.3_PMIC (PMIC BUCK1)";
+				regulator-name = "+V3.3 (PMIC BUCK1)";
 			};
 
 			reg_1v8: buck2 {
@@ -324,6 +324,14 @@
 				regulator-max-microvolt = <3300000>;
 				regulator-min-microvolt = <3300000>;
 				regulator-name = "+V3.3_1.8_SD (PMIC LDO1)";
+			};
+
+			ldo2 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-max-microvolt = <850000>;
+				regulator-min-microvolt = <850000>;
+				regulator-name = "+V_PMIC_LDO2 (PMIC LDO4)"; // +VDDR_CORE
 			};
 
 			ldo3 {

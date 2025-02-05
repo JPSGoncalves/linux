@@ -48,7 +48,7 @@
 	};
 
 	opp-table {
-		/* Requires VDD_CORE at 0v85 */
+		/* Add 1.4GHz OPP. Requires VDD_CORE to be at 0.85V */
 		opp-1400000000 {
 			opp-hz = /bits/ 64 <1400000000>;
 			opp-supported-hw = <0x01 0x0004>;

@@ -6,3 +6,26 @@
  *
  * https://www.toradex.com/computer-on-modules/verdin-arm-family/ti-am62p
  */
+
+/* On-module Bluetooth */
+&main_uart6 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart6>;
+	uart-has-rtscts;
+	status = "okay";
+
+	bluetooth {
+		compatible = "nxp,88w8987-bt";
+		fw-init-baudrate = <3000000>;
+	};
+};
+
+/* On-module Wi-Fi */
+&sdhci2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_sdhci2>;
+	keep-power-in-suspend;
+	non-removable;
+	ti,fails-without-test-cd;
+	status = "okay";
+};

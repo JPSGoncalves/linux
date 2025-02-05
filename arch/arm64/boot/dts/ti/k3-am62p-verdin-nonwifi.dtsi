@@ -6,3 +6,10 @@
  *
  * https://www.toradex.com/computer-on-modules/verdin-arm-family/ti-am62p
  */
+
+/* SDIO on MSP 30, 31, 32, 33, 34, 35 */
+&sdhci2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_sdhci2>;
+	status = "disabled";
+};

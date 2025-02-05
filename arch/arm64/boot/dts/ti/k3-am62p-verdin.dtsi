@@ -47,28 +47,6 @@
 		device_type = "memory";
 	};
 
-	reserved-memory {
-		#address-cells = <2>;
-		#size-cells = <2>;
-		ranges;
-
-		secure_tfa_ddr: tfa@9e780000 {
-			reg = <0x00 0x9e780000 0x00 0x80000>;
-			no-map;
-		};
-
-		secure_ddr: optee@9e800000 {
-			reg = <0x00 0x9e800000 0x00 0x01800000>; /* for OP-TEE */
-			no-map;
-		};
-
-		wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
-			compatible = "shared-dma-pool";
-			reg = <0x00 0x9c900000 0x00 0x01e00000>;
-			no-map;
-		};
-	};
-
 	opp-table {
 		/* Requires VDD_CORE at 0v85 */
 		opp-1400000000 {
@@ -95,17 +73,31 @@
 		compatible = "regulator-fixed";
 		regulator-name = "+V_SODIMM";
 	};
+
+	reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		secure_tfa_ddr: tfa@9e780000 {
+			reg = <0x00 0x9e780000 0x00 0x80000>;
+			no-map;
+		};
+
+		secure_ddr: optee@9e800000 {
+			reg = <0x00 0x9e800000 0x00 0x01800000>; /* for OP-TEE */
+			no-map;
+		};
+
+		wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0x9c900000 0x00 0x01e00000>;
+			no-map;
+		};
+	};
 };
 
 &main_pmx0 {
-	/* MDIO, shared by Verdin ETH_1 (On-module PHY) and Verdin ETH_2_RGMII */
-	pinctrl_mdio: mdio0-default-pins {
-		pinctrl-single,pins = <
-			AM62PX_IOPAD(0x0160, PIN_OUTPUT, 0) /* (F17) MDIO0_MDC  */ /* SODIMM 193 */
-			AM62PX_IOPAD(0x015c, PIN_INPUT,  0) /* (F16) MDIO0_MDIO */ /* SODIMM 191 */
-		>;
-	};
-
 	/* Verdin USB_1_ID */
 	pinctrl_usb0_id: main-gpio0-31-default-pins {
 		pinctrl-single,pins = <
@@ -144,14 +136,6 @@
 		>;
 	};
 
-	/* Verdin UART_3, used as the Linux console */
-	pinctrl_uart0: main-uart0-default-pins {
-		pinctrl-single,pins = <
-			AM62PX_IOPAD(0x1c8, PIN_INPUT,  0) /* (A22) UART0_RXD */ /* SODIMM 147 */
-			AM62PX_IOPAD(0x1cc, PIN_OUTPUT, 0) /* (B22) UART0_TXD */ /* SODIMM 149 */
-		>;
-	};
-
 	pinctrl_eth_clock: main-system-clkout0-default-pins {
 		pinctrl-single,pins = <
 			AM62PX_IOPAD(0x01f0, PIN_OUTPUT_PULLUP, 5) /* (C25) EXT_REFCLK1.CLKOUT0 */ /* ETH_25MHz_CLK */
@@ -161,6 +145,22 @@
 	pinctrl_pmic_extint: main-system-extint-default-pins {
 		pinctrl-single,pins = <
 			AM62PX_IOPAD(0x01f4, PIN_INPUT, 0) /* (C23) EXTINTn */ /* PMIC_EXTINT# */
+		>;
+	};
+
+	/* Verdin UART_3, used as the Linux console */
+	pinctrl_uart0: main-uart0-default-pins {
+		pinctrl-single,pins = <
+			AM62PX_IOPAD(0x1c8, PIN_INPUT,  0) /* (A22) UART0_RXD */ /* SODIMM 147 */
+			AM62PX_IOPAD(0x1cc, PIN_OUTPUT, 0) /* (B22) UART0_TXD */ /* SODIMM 149 */
+		>;
+	};
+
+	/* MDIO, shared by Verdin ETH_1 (On-module PHY) and Verdin ETH_2_RGMII */
+	pinctrl_mdio: mdio0-default-pins {
+		pinctrl-single,pins = <
+			AM62PX_IOPAD(0x0160, PIN_OUTPUT, 0) /* (F17) MDIO0_MDC  */ /* SODIMM 193 */
+			AM62PX_IOPAD(0x015c, PIN_INPUT,  0) /* (F16) MDIO0_MDIO */ /* SODIMM 191 */
 		>;
 	};
 };

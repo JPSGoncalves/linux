@@ -548,6 +548,12 @@
 			AM62PX_IOPAD(0x0020, PIN_INPUT,  1) /* (N22) OSPI0_D5.SPI1_CLK */ /* SODIMM 196 */
 			AM62PX_IOPAD(0x0024, PIN_OUTPUT, 1) /* (P21) OSPI0_D6.SPI1_D0  */ /* SODIMM 200 */
 			AM62PX_IOPAD(0x0028, PIN_INPUT,  1) /* (N20) OSPI0_D7.SPI1_D1  */ /* SODIMM 198 */
+		>;
+	};
+
+	/* Verdin SPI_1_CS */
+	pinctrl_main_spi1_cs0: main-spi1-cs0-default-pins {
+		pinctrl-single,pins = <
 			AM62PX_IOPAD(0x001c, PIN_OUTPUT, 1) /* (N21) OSPI0_D4.SPI1_CS0 */ /* SODIMM 202 */
 		>;
 	};
@@ -1024,7 +1030,7 @@
 /* Verdin SPI_1 */
 &main_spi1 {
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_main_spi1>;
+	pinctrl-0 = <&pinctrl_main_spi1>, <&pinctrl_main_spi1_cs0>;
 	ti,pindir-d0-out-d1-in;
 	status = "disabled";
 };

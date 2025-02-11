@@ -11,6 +11,10 @@
 #include <dt-bindings/leds/common.h>
 
 / {
+	aliases {
+		eeprom1 = &carrier_eeprom;
+	};
+
 	leds {
 		compatible = "gpio-leds";
 		pinctrl-names = "default";
@@ -96,7 +100,7 @@
 		reg = <0x4f>;
 	};
 
-	eeprom@57 {
+	carrier_eeprom: eeprom@57 {
 		compatible = "st,24c02", "atmel,24c02";
 		reg = <0x57>;
 		pagesize = <16>;

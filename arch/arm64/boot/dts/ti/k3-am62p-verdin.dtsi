@@ -1003,13 +1003,6 @@
 	status = "disabled";
 };
 
-/* Verdin MSP_3/MSP_8 as CAN */
-&main_mcan1 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_main_mcan1>;
-	status = "disabled";
-};
-
 /* TPM SPI, optional SPI on module specific pins */
 &main_spi0 {
 	pinctrl-names = "default";
@@ -1126,13 +1119,6 @@
 &mcu_mcan0 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_mcu_mcan0>;
-	status = "disabled";
-};
-
-/* Verdin MSP_13/MSP_18 as CAN */
-&mcu_mcan1 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_mcu_mcan1>;
 	status = "disabled";
 };
 

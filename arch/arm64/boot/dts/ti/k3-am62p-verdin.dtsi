@@ -1136,7 +1136,6 @@
 	status = "disabled";
 };
 
-
 /* Verdin UART_4 */
 &mcu_uart0 {
 	pinctrl-names = "default";

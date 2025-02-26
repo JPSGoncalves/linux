@@ -308,6 +308,20 @@
 		>;
 	};
 
+	/* Verdin I2S_2_D_OUT as GPIO (conflict with Verdin I2S_2 interface) */
+	pinctrl_i2s_2_d_out_gpio: main-gpio0-34-default-pins {
+		pinctrl-single,pins = <
+			AM62PX_IOPAD(0x008c, PIN_INPUT, 7) /* (T25) GPMC0_WEn.GPIO0_34 */ /* SODIMM 46 */
+		>;
+	};
+
+	/* Verdin I2S_2_BCLK as GPIO (conflict with Verdin I2S_2 interface) */
+	pinctrl_i2s_2_bclk_gpio: main-gpio0-35-default-pins {
+		pinctrl-single,pins = <
+			AM62PX_IOPAD(0x0090, PIN_INPUT, 7) /* (U24) GPMC0_BE0n_CLE.GPIO0_35 */ /* SODIMM 42 */
+		>;
+	};
+
 	pinctrl_eth_int: main-gpio0-36-default-pins {
 		pinctrl-single,pins = <
 			AM62PX_IOPAD(0x0094, PIN_INPUT, 7) /* (T24) GPMC0_BE1n.GPIO0_36 */ /* ETH_INT# */

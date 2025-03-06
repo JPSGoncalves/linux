@@ -457,9 +457,9 @@ int prueth_init_rx_chns(struct prueth_emac *emac,
 			struct prueth_rx_chn *rx_chn,
 			char *name, u32 max_rflows,
 			u32 max_desc_num);
-int prueth_dma_rx_push(struct prueth_emac *emac,
-		       struct sk_buff *skb,
-		       struct prueth_rx_chn *rx_chn);
+int prueth_dma_rx_push_mapped(struct prueth_emac *emac,
+			      struct prueth_rx_chn *rx_chn,
+			      struct page *page, u32 buf_len);
 void emac_rx_timestamp(struct prueth_emac *emac,
 		       struct sk_buff *skb, u32 *psdata);
 enum netdev_tx emac_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev);

@@ -56,6 +56,7 @@ void prueth_cleanup_rx_chns(struct prueth_emac *emac,
 	if (rx_chn->rx_chn)
 		k3_udma_glue_release_rx_chn(rx_chn->rx_chn);
 }
+EXPORT_SYMBOL_GPL(prueth_cleanup_rx_chns);
 
 void prueth_cleanup_tx_chns(struct prueth_emac *emac)
 {
@@ -76,6 +77,7 @@ void prueth_cleanup_tx_chns(struct prueth_emac *emac)
 		memset(tx_chn, 0, sizeof(*tx_chn));
 	}
 }
+EXPORT_SYMBOL_GPL(prueth_cleanup_tx_chns);
 
 void prueth_ndev_del_tx_napi(struct prueth_emac *emac, int num)
 {
@@ -89,6 +91,7 @@ void prueth_ndev_del_tx_napi(struct prueth_emac *emac, int num)
 		netif_napi_del(&tx_chn->napi_tx);
 	}
 }
+EXPORT_SYMBOL_GPL(prueth_ndev_del_tx_napi);
 
 void prueth_xmit_free(struct prueth_tx_chn *tx_chn,
 		      struct cppi5_host_desc_t *desc)
@@ -294,6 +297,7 @@ fail:
 	prueth_ndev_del_tx_napi(emac, i);
 	return ret;
 }
+EXPORT_SYMBOL_GPL(prueth_ndev_add_tx_napi);
 
 int prueth_init_tx_chns(struct prueth_emac *emac)
 {
@@ -374,6 +378,7 @@ fail:
 	prueth_cleanup_tx_chns(emac);
 	return ret;
 }
+EXPORT_SYMBOL_GPL(prueth_init_tx_chns);
 
 int prueth_init_rx_chns(struct prueth_emac *emac,
 			struct prueth_rx_chn *rx_chn,
@@ -483,10 +488,11 @@ fail:
 	prueth_cleanup_rx_chns(emac, rx_chn, max_rflows);
 	return ret;
 }
+EXPORT_SYMBOL_GPL(prueth_init_rx_chns);
 
-static int prueth_dma_rx_push_mapped(struct prueth_emac *emac,
-				     struct prueth_rx_chn *rx_chn,
-				     struct page *page, u32 buf_len)
+int prueth_dma_rx_push_mapped(struct prueth_emac *emac,
+			      struct prueth_rx_chn *rx_chn,
+			      struct page *page, u32 buf_len)
 {
 	struct net_device *ndev = emac->ndev;
 	struct cppi5_host_desc_t *desc_rx;
@@ -512,9 +518,10 @@ static int prueth_dma_rx_push_mapped(struct prueth_emac *emac,
 	swdata->data.page = page;
 	swdata->rx_chn = rx_chn;
 
-	return k3_udma_glue_push_rx_chn(rx_chn->rx_chn, 0,
+	return k3_udma_glue_push_rx_chn(rx_chn->rx_chn, PRUETH_RX_FLOW_DATA,
 					desc_rx, desc_dma);
 }
+EXPORT_SYMBOL_GPL(prueth_dma_rx_push_mapped);
 
 u64 icssg_ts_to_ns(u32 hi_sw, u32 hi, u32 lo, u32 cycle_time_ns)
 {
@@ -588,7 +595,6 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id, int *xdp_state)
 		return 0;
 
 	desc_rx = k3_cppi_desc_pool_dma2virt(rx_chn->desc_pool, desc_dma);
-
 	swdata = cppi5_hdesc_get_swdata(desc_rx);
 	if (swdata->type != PRUETH_SWDATA_PAGE) {
 		netdev_err(ndev, "rx_pkt: invliad swdata->type %d\n", swdata->type);
@@ -673,6 +679,7 @@ static void prueth_rx_cleanup(void *data, dma_addr_t desc_dma)
 
 	pool = rx_chn->pg_pool;
 
+	pool = rx_chn->pg_pool;
 	desc_rx = k3_cppi_desc_pool_dma2virt(rx_chn->desc_pool, desc_dma);
 	swdata = cppi5_hdesc_get_swdata(desc_rx);
 	if (swdata->type == PRUETH_SWDATA_PAGE) {
@@ -1013,6 +1020,7 @@ static struct page_pool *prueth_create_page_pool(struct prueth_emac *emac,
 	pp_params.dma_dir = DMA_BIDIRECTIONAL;
 	pp_params.dev = dma_dev;
 	pp_params.napi = &emac->napi_rx;
+	pp_params.max_len = PAGE_SIZE;
 
 	pool = page_pool_create(&pp_params);
 	if (IS_ERR(pool))
@@ -1065,7 +1073,7 @@ int prueth_prepare_rx_chan(struct prueth_emac *emac,
 		ret = prueth_dma_rx_push_mapped(emac, chn, page, buf_size);
 		if (ret < 0) {
 			netdev_err(emac->ndev,
-				   "cannot submit skb for rx chan %s ret %d\n",
+				   "cannot submit page for rx chan %s ret %d\n",
 				   chn->name, ret);
 			page_pool_recycle_direct(pool, page);
 			goto recycle_alloc_pg;
@@ -1109,6 +1117,9 @@ void prueth_reset_rx_chan(struct prueth_rx_chn *chn,
 					  prueth_rx_cleanup, !!i);
 	if (disable)
 		k3_udma_glue_disable_rx_chn(chn->rx_chn);
+
+	page_pool_destroy(chn->pg_pool);
+	chn->pg_pool = NULL;
 }
 
 void emac_ndo_tx_timeout(struct net_device *ndev, unsigned int txqueue)

@@ -31,7 +31,7 @@
 		rtc0 = &som_rtc_i2c;
 		rtc1 = &wkup_rtc0;
 		serial0 = &main_uart1;
-		serial1 = &mcu_uart0;
+		serial1 = &wkup_uart0;
 		serial2 = &main_uart0;
 		serial3 = &mcu_uart0;
 		usb0 = &usb0;

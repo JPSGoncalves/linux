@@ -1117,10 +1117,10 @@
 &mcu_gpio0 {
 	gpio-line-names =
 		"",
-		"SODIMM 206",
-		"SODIMM 208",
-		"SODIMM 210",
-		"SODIMM 212",
+		"SODIMM_206",
+		"SODIMM_208",
+		"SODIMM_210",
+		"SODIMM_212",
 		"",
 		"",
 		"",

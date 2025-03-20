@@ -221,7 +221,6 @@ static void icss_iep_enable_shadow_mode(struct icss_iep *iep)
 
 		regmap_update_bits(iep->map, ICSS_IEP_CMP_CFG_REG,
 				   IEP_CMP_CFG_CMP_EN(cmp), 0);
-
 	}
 
 	/* enable reset counter on CMP0 event */

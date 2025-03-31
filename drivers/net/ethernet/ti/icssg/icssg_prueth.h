@@ -490,8 +490,10 @@ void prueth_put_cores(struct prueth *prueth, int slice);
 /* Revision specific helper */
 u64 icssg_ts_to_ns(u32 hi_sw, u32 hi, u32 lo, u32 cycle_time_ns);
 
-/* XDP Related helpers */
-int emac_run_xdp(struct prueth_emac *emac, struct xdp_buff *xdp,
-		 struct page *page);
+/* XDP Helpers */
+int emac_xmit_xdp_frame(struct prueth_emac *emac,
+			       struct xdp_frame *xdpf,
+			       struct page *page,
+			       unsigned int q_idx);
 
 #endif /* __NET_TI_ICSSG_PRUETH_H */

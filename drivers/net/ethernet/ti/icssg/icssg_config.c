@@ -842,3 +842,4 @@ int emac_fdb_flow_id_updated(struct prueth_emac *emac)
 
 	return -EINVAL;
 }
+EXPORT_SYMBOL_GPL(emac_fdb_flow_id_updated);

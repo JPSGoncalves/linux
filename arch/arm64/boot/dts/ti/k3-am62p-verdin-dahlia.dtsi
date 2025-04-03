@@ -92,7 +92,7 @@
 		reg = <0x1a>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_i2s1_mclk>;
-		clocks = <&audio_refclk1>;
+		clocks = <&audio_refclk0>;
 		clock-names = "mclk";
 		#sound-dai-cells = <0>;
 		AVDD-supply = <&reg_1v8_sw>;

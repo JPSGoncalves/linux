@@ -34,6 +34,7 @@
 		serial1 = &wkup_uart0;
 		serial2 = &main_uart0;
 		serial3 = &mcu_uart0;
+		serial4 = &main_uart6;
 		usb0 = &usb0;
 		usb1 = &usb1;
 	};

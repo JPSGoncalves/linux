@@ -1,0 +1,71 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/*
+ * Aquila AM69 GMLS MAX96724 Deserializer
+ *
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/media/video-interfaces.h>
+
+/ {
+	compatible = "toradex,aquila-am69";
+};
+
+&{/} {
+	reg_3v3_csi: regulator-3v3-csi {
+		compatible = "regulator-fixed";
+		regulator-name = "V_CSI";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+	};
+
+	reg_12v_cam: regulator-12v-cam {
+		compatible = "regulator-fixed";
+		regulator-name = "V_12V_IN";
+		regulator-min-microvolt = <12000000>;
+		regulator-max-microvolt = <12000000>;
+	};
+};
+
+/* Aquila I2C_4_CSI1 */
+&main_i2c1 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "okay";
+
+	max96724: gmsl-deserializer@27 {
+		compatible = "maxim,max96724";
+		reg = <0x27>;
+		port0-poc-supply = <&regulator_gmlsa>;
+		port1-poc-supply = <&regulator_gmlsb>;
+		port2-poc-supply = <&regulator_gmlsc>;
+		port3-poc-supply = <&regulator_gmlsd>;
+	};
+
+	regulator@28 {
+		compatible = "maxim,max20086";
+		reg = <0x28>;
+		in-supply = <&reg_12v_cam>;
+		vdd-supply = <&reg_3v3_csi>;
+
+		regulators {
+			regulator_gmlsd: OUT1 {
+				regulator-name = "VPOC_D";
+			};
+
+			regulator_gmlsc: OUT2 {
+				regulator-name = "VPOC_C";
+			};
+
+			regulator_gmlsb: OUT3 {
+				regulator-name = "VPOC_B";
+			};
+
+			regulator_gmlsa: OUT4 {
+				regulator-name = "VPOC_A";
+			};
+		};
+	};
+};

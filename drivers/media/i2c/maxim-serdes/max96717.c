@@ -786,6 +786,7 @@ static int max96717_set_pipe_dt_en(struct max_ser *ser, struct max_ser_pipe *pip
 	struct max96717_priv *priv = ser_to_priv(ser);
 	unsigned int index = max96717_pipe_id(priv, pipe);
 	unsigned int reg;
+	int ret = 0;
 
 	if (i < 2)
 		reg = MAX96717_FRONTTOP_12(index, i);
@@ -796,7 +797,10 @@ static int max96717_set_pipe_dt_en(struct max_ser *ser, struct max_ser_pipe *pip
 		 */
 		reg = MAX96717_EXTA(i - 2);
 
-	return regmap_assign_bits(priv->regmap, reg, MAX96717_MEM_DT_EN, enable);
+	ret = regmap_assign_bits(priv->regmap, reg, MAX96717_MEM_DT_EN, enable);
+
+	debug_reg(priv->dev, priv->regmap, MAX96717_MEM_DT_EN);
+	return ret;
 }
 
 static int max96717_set_pipe_dt(struct max_ser *ser, struct max_ser_pipe *pipe,
@@ -805,14 +809,18 @@ static int max96717_set_pipe_dt(struct max_ser *ser, struct max_ser_pipe *pipe,
 	struct max96717_priv *priv = ser_to_priv(ser);
 	unsigned int index = max96717_pipe_id(priv, pipe);
 	unsigned int reg;
+	int ret = 0;
 
 	if (i < 2)
 		reg = MAX96717_FRONTTOP_12(index,  i);
 	else
 		reg = MAX96717_EXTA(i - 2);
 
-	return regmap_update_bits(priv->regmap, reg, MAX96717_MEM_DT_SEL,
+	ret = regmap_update_bits(priv->regmap, reg, MAX96717_MEM_DT_SEL,
 				  FIELD_PREP(MAX96717_MEM_DT_SEL, dt));
+
+	debug_reg(priv->dev, priv->regmap, MAX96717_MEM_DT_SEL);
+	return ret;
 }
 
 static int max96717_set_pipe_vcs(struct max_ser *ser,
@@ -915,6 +923,8 @@ static int max96717_init_phy(struct max_ser *ser,
 		return -EINVAL;
 	}
 
+	dev_info(priv->dev, "lanes %u", num_data_lanes);
+
 	/* Configure a lane count. */
 	ret = regmap_update_bits(priv->regmap, MAX96717_MIPI_RX1,
 				 MAX96717_MIPI_RX1_CTRL_NUM_LANES,
@@ -922,6 +932,8 @@ static int max96717_init_phy(struct max_ser *ser,
 					    num_data_lanes - 1));
 	if (ret)
 		return ret;
+
+	debug_reg(priv->dev, priv->regmap, MAX96717_MIPI_RX1);
 
 	/* Configure lane mapping. */
 	val = 0;
@@ -943,12 +955,15 @@ static int max96717_init_phy(struct max_ser *ser,
 	if (ret)
 		return ret;
 
+	debug_reg(priv->dev, priv->regmap, MAX96717_MIPI_RX3);
+
 	ret = regmap_update_bits(priv->regmap, MAX96717_MIPI_RX2,
 				 MAX96717_MIPI_RX2_PHY1_LANE_MAP,
 				 FIELD_PREP(MAX96717_MIPI_RX2_PHY1_LANE_MAP, val >> 4));
 	if (ret)
 		return ret;
 
+	debug_reg(priv->dev, priv->regmap, MAX96717_MIPI_RX2);
 	/* Configure lane polarity. */
 	val = 0;
 	for (i = 0; i < num_data_lanes; i++)
@@ -972,6 +987,9 @@ static int max96717_init_phy(struct max_ser *ser,
 				 phy->mipi.lane_polarities[0]);
 	if (ret)
 		return ret;
+
+	debug_reg(priv->dev, priv->regmap, MAX96717_MIPI_RX4);
+	debug_reg(priv->dev, priv->regmap, MAX96717_MIPI_RX5);
 
 	if (priv->info->supports_noncontinuous_clock) {
 		ret = regmap_assign_bits(priv->regmap, MAX96717_MIPI_RX0,
@@ -1033,6 +1051,9 @@ static int max96717_set_pipe_phy(struct max_ser *ser, struct max_ser_pipe *pipe,
 	if (ret)
 		return ret;
 
+	debug_reg(priv->dev, priv->regmap, MAX96717_FRONTTOP_0);
+	debug_reg(priv->dev, priv->regmap, MAX96717_FRONTTOP_9);
+	
 	return 0;
 }
 
@@ -1087,6 +1108,12 @@ static int max96717_set_pipe_mode(struct max_ser *ser,
 					    !!mode->soft_bpp));
 	if (ret)
 		return ret;
+
+	debug_reg(priv->dev, priv->regmap, MAX96717_VIDEO_TX0(index));
+	debug_reg(priv->dev, priv->regmap, MAX96717_VIDEO_TX1(index));
+	debug_reg(priv->dev, priv->regmap, MAX96717_VIDEO_TX2(index));
+	debug_reg(priv->dev, priv->regmap, MAX96717_FRONTTOP_10);
+	debug_reg(priv->dev, priv->regmap, MAX96717_FRONTTOP_11);
 
 	return 0;
 }

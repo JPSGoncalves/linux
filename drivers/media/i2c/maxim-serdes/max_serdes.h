@@ -85,4 +85,21 @@ int max_get_streams_masks(struct device *dev,
 			  u32 num_sink_pads, u64 *old_streams_masks,
 			  u64 **new_streams_masks, bool enable);
 
+#ifdef dev_fmt
+#undef dev_fmt
+#endif
+#define dev_fmt(fmt) "jp:%s:%d: " fmt, __func__, __LINE__
+
+#define debug_reg(dev, regmap, reg) \
+	do { \
+		{ \
+			unsigned int reg_val = 0; \
+			if(regmap_read(regmap, reg, &reg_val)) \
+				dev_err(dev, "read err %Xh\n", reg); \
+										\
+			dev_info(dev, "read reg %Xh, val %Xh\n", reg, reg_val); \
+		} \
+	} while (false);
+
+
 #endif // MAX_SERDES_H

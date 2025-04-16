@@ -1,0 +1,55 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/*
+ * Aquila AM69 Clover CSI 2 MAX96724 Deserializer Addon Board
+ *
+ */
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/media/video-interfaces.h>
+#include "k3-am69-aquila-quad-gmsl-deserializer.dtso"
+
+/ {
+	compatible = "toradex,aquila-am69";
+};
+
+&csi1_port0 {
+	status = "okay";
+
+	csi2rx1_in: endpoint {
+		remote-endpoint = <&gmsl_des_csi_da_out>;
+		bus-type = <MEDIA_BUS_TYPE_CSI2_DPHY>;
+		clock-lanes = <0>;
+		data-lanes = <1 2>;
+		link-frequencies = /bits/ 64 <500000000>;
+	};
+};
+
+&dphy1 {
+	status = "okay";
+};
+
+&max96724 {
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		/* Combined MAX96724 PHY1 2 lanes */
+		port@4 {
+			reg = <4>;
+
+			gmsl_des_csi_da_out: endpoint {
+				remote-endpoint = <&csi2rx1_in>;
+				bus-type = <MEDIA_BUS_TYPE_CSI2_DPHY>;
+				clock-lanes = <0>;
+				data-lanes = <1 2>;
+				/* Aquila CSI_2 lanes D1 and D3 polarities are reversed on the GMLS CSI Port A */
+				lane-polarities = <0 0 1>;
+				link-frequencies = /bits/ 64 <500000000>;
+			};
+		};
+	};
+};
+
+&ti_csi2rx1 {
+	status = "okay";
+};

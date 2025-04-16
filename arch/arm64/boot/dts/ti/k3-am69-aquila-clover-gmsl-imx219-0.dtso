@@ -1,0 +1,86 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/*
+* Aquila AM69 Clover MAX96717 to IMX219 Camera - GMSL Link 0
+ *
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/media/video-interfaces.h>
+#include "k3-am69-aquila-clover-gmsl-serializer-0.dtso"
+
+/ {
+	compatible = "toradex,aquila-am69";
+};
+
+&{/} {
+	clk_cam0_osc24: clk-cam0-osc24 {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <24000000>;
+	};
+
+	regulator_cam0: regulator-cam0 {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_cam0>;
+		gpios = <&gmsl_ser0 0 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		regulator-name = "V_CAM0";
+		startup-delay-us = <5000>;
+	};
+};
+
+&gmsl_ser0 {
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+
+			gmsl_ser0_csi_in: endpoint {
+				remote-endpoint = <&cam0_csi_out>;
+				clock-lanes = <0>;
+				data-lanes = <1 2>;
+				/* CLK, D0 and D1 polarities are reversed in Serializer CSI Input */
+				lane-polarities = <1 1 1>;
+				link-frequencies = /bits/ 64 <456000000>;
+			};
+		};
+	};
+
+	i2c-gate {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		camera@10 {
+			compatible = "sony,imx219";
+			reg = <0x10>;
+			clocks = <&clk_cam0_osc24>;
+			clock-names = "xclk";
+			VANA-supply = <&regulator_cam0>;
+			VDIG-supply = <&regulator_cam0>;
+			VDDL-supply = <&regulator_cam0>;
+
+			port {
+				cam0_csi_out: endpoint {
+					remote-endpoint = <&gmsl_ser0_csi_in>;
+					clock-lanes = <0>;
+					data-lanes = <1 2>;
+					link-frequencies = /bits/ 64 <456000000>;
+				};
+			};
+		};
+	};
+
+	pinctrl_cam0: cam0-pingrp {
+		enable-pin {
+			pins = "mfp0";
+			function = "gpio";
+			output-enable;
+		};
+	};
+};

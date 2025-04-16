@@ -1,0 +1,79 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/*
+ * Aquila AM69 Clover CSI2 IMX219 Raspiberry Camera Videtronic
+ *
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/media/video-interfaces.h>
+
+/ {
+	compatible = "toradex,aquila-am69";
+};
+
+&{/} {
+	clk_cam_csi2_osc24: clk-cam-csi2-osc24 {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <24000000>;
+	};
+
+	regulator_cam_csi2: regulator-cam-csi2 {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_gpio_13_csi_2>;
+		/* Aquila GPIO_13_CSI_2 - BergStark Connector 8 */
+		gpio = <&wkup_gpio0 32 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		regulator-name = "V_CSI2";
+		startup-delay-us = <5000>;
+	};
+};
+
+&csi1_port0 {
+	status = "okay";
+
+	csi2rx1_in: endpoint {
+		remote-endpoint = <&cam_csi2_out>;
+		bus-type = <MEDIA_BUS_TYPE_CSI2_DPHY>;
+		clock-lanes = <0>;
+		data-lanes = <1 2>;
+	};
+};
+
+&dphy1 {
+	status = "okay";
+};
+
+/* Aquila I2C_5_CSI2 */
+&main_i2c2 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "okay";
+
+	camera@10 {
+		compatible = "sony,imx219";
+		reg = <0x10>;
+		clocks = <&clk_cam_csi2_osc24>;
+		clock-names = "xclk";
+		VANA-supply = <&regulator_cam_csi2>;
+		VDIG-supply = <&regulator_cam_csi2>;
+		VDDL-supply = <&regulator_cam_csi2>;
+
+		port {
+			cam_csi2_out: endpoint {
+				remote-endpoint = <&csi2rx1_in>;
+				clock-lanes = <0>;
+				data-lanes = <1 2>;
+				link-frequencies = /bits/ 64 <456000000>;
+			};
+		};
+	};
+};
+
+&ti_csi2rx1 {
+	status = "okay";
+};

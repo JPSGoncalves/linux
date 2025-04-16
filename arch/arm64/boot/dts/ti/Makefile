@@ -175,6 +175,11 @@ dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm-pwm.dtbo
 # Boards with J784s4 SoC
 dtb-$(CONFIG_ARCH_K3) += k3-am69-aquila-clover.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am69-aquila-dev.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am69-aquila-clover-csi1-imx219.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am69-aquila-clover-csi2-imx219.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am69-aquila-clover-csi2-gmsl-deserializer.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am69-aquila-clover-gmsl-serializer-0.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am69-aquila-clover-gmsl-imx219-0.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am69-sk.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am69-sk-csi2-ov5640.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am69-sk-fpdlink-fusion-auxport.dtbo
@@ -409,6 +414,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-v3link-imx219-0-0.dtbo \
 			 k3-v3link-tevi-ov5640-0-2.dtbo \
 			 k3-v3link-tevi-ov5640-0-3.dtbo
 
+
 # Enable support for device-tree overlays
 DTC_FLAGS_k3-am625-beagleplay += -@
 DTC_FLAGS_k3-am625-sk += -@
@@ -441,3 +447,4 @@ DTC_FLAGS_k3-j722s-evm-v3link-fusion += -@
 DTC_FLAGS_k3-j784s4-evm += -@
 DTC_FLAGS_k3-j742s2-evm += -@
 DTC_FLAGS_k3-j742s2-evm-ethfw += -@
+DTC_FLAGS_k3-am69-aquila-proc-board += -@

@@ -197,11 +197,15 @@ static int csi2rx_configure_ext_dphy(struct csi2rx_priv *csi2rx)
 	struct phy_configure_opts_mipi_dphy *cfg = &opts.mipi_dphy;
 	struct v4l2_mbus_framefmt *framefmt;
 	struct v4l2_subdev_state *state;
+	struct media_pad *remote_pad;
 	const struct csi2rx_fmt *fmt;
 	s64 link_freq;
 	int ret;
 
-	if (v4l2_ctrl_find(handler, V4L2_CID_LINK_FREQ)) {
+	remote_pad = media_entity_remote_source_pad_unique(&csi2rx->subdev.entity);
+	if (remote_pad) {
+		link_freq = v4l2_get_link_freq(remote_pad, 0, 0);
+	} else if (v4l2_ctrl_find(handler, V4L2_CID_LINK_FREQ)) {
 		link_freq = v4l2_get_link_freq(handler, 0, 0);
 	} else {
 		state = v4l2_subdev_get_locked_active_state(&csi2rx->subdev);

@@ -1,0 +1,88 @@
+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/remoteproc/sophgo,cv1800b-c906l.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+title: Sophgo CV18XX/SG200X C906L remote processor
+
+maintainers:
+  - Junhui Liu <junhui.liu@pigmoral.tech>
+  - João Paulo Gonçalves <jpaulo.silvagoncalves@gmail.com>
+
+description:
+  The Sophgo CV18XX/SG200X SoCs integrate a secondary T-Head C906 core, known
+  as the C906L (Little Core), alongside the main processor (Big Core). Unlike
+  the main processor, the C906L has no MMU, and it usually runs an RTOS or
+  bare-metal applications.
+
+properties:
+  compatible:
+    const: sophgo,cv1800b-c906l
+
+  clocks:
+    maxItems: 1
+
+  firmware-name:
+    maxItems: 1
+
+  mboxes:
+    description:
+      Required only for RPMsg/virtio communication with the remote processor.
+    items:
+      - description: Channel used to send messages to the C906L
+      - description: Channel used to receive messages from the C906L
+
+  mbox-names:
+    items:
+      - const: tx
+      - const: rx
+
+  memory-region:
+    description:
+      Reserved memory regions used by the C906L. The firmware region is always
+      required. The virtio regions are required only when RPMsg/virtio
+      communication is used.
+    minItems: 1
+    items:
+      - description: Firmware region
+      - description: Virtio device buffer
+      - description: Virtio ring 0
+      - description: Virtio ring 1
+
+  resets:
+    maxItems: 1
+
+  sophgo,sec-syscon:
+    $ref: /schemas/types.yaml#/definitions/phandle
+    description:
+      Phandle to the SEC_SYS system controller, used to enable the C906L and
+      set its boot address.
+
+required:
+  - compatible
+  - clocks
+  - memory-region
+  - resets
+  - sophgo,sec-syscon
+
+dependencies:
+  mbox-names: [ mboxes ]
+
+additionalProperties: false
+
+examples:
+  - |
+    #include <dt-bindings/clock/sophgo,cv1800.h>
+
+    remoteproc {
+        compatible = "sophgo,cv1800b-c906l";
+        clocks = <&clk CLK_C906_1>;
+        firmware-name = "c906l-fw.elf";
+        mboxes = <&mbox 0 2>, <&mbox 1 1>;
+        mbox-names = "tx", "rx";
+        memory-region = <&c906l_fw>, <&vdev0buffer>,
+                        <&vdev0vring0>, <&vdev0vring1>;
+        resets = <&rst 294>; /* RST_CPUSYS2 */
+        sophgo,sec-syscon = <&sec_sys>;
+    };

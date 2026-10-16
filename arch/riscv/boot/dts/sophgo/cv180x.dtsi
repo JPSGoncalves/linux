@@ -19,11 +19,26 @@
 		#clock-cells = <0>;
 	};
 
+	c906l: remoteproc {
+		compatible = "sophgo,cv1800b-c906l";
+		clocks = <&clk CLK_C906_1>;
+		resets = <&rst RST_CPUSYS2>;
+		sophgo,sec-syscon = <&sec_sys>;
+		status = "disabled";
+	};
+
 	soc {
 		compatible = "simple-bus";
 		#address-cells = <1>;
 		#size-cells = <1>;
 		ranges;
+
+		mailbox: mailbox@1900000 {
+			compatible = "sophgo,cv1800b-mailbox";
+			reg = <0x01900000 0x1000>;
+			interrupts = <SOC_PERIPHERAL_IRQ(85) IRQ_TYPE_LEVEL_HIGH>;
+			#mbox-cells = <2>;
+		};
 
 		sec_sys: syscon@20b0000 {
 			compatible = "sophgo,cv1800b-sec-sys";

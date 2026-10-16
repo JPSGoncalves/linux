@@ -22,6 +22,17 @@
 		stdout-path = "serial0:115200n8";
 	};
 
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		c906l_fw: memory@9fe00000 {
+			reg = <0x9fe00000 0x200000>;
+			no-map;
+		};
+	};
+
 	wifi_pwrseq: wifi-pwrseq {
 		compatible = "mmc-pwrseq-simple";
 		reset-gpios = <&porta 15 GPIO_ACTIVE_LOW>;
@@ -163,6 +174,13 @@
 			power-source = <3300>;
 		};
 	};
+};
+
+&c906l {
+	memory-region = <&c906l_fw>;
+	mboxes = <&mailbox 0 2>, <&mailbox 1 1>;
+	mbox-names = "tx", "rx";
+	status = "okay";
 };
 
 &dmac {

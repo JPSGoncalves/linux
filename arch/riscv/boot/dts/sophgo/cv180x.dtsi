@@ -43,6 +43,7 @@
 		sec_sys: syscon@20b0000 {
 			compatible = "sophgo,cv1800b-sec-syscon", "syscon";
 			reg = <0x020b0000 0x10000>;
+			clocks = <CLK_EFUSE>;
 		};
 
 		syscon: syscon@3000000 {

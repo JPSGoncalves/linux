@@ -5,6 +5,8 @@
 
 #include <linux/bits.h>
 #include <linux/clk.h>
+#include <linux/devm-helpers.h>
+#include <linux/mailbox_client.h>
 #include <linux/mfd/syscon.h>
 #include <linux/module.h>
 #include <linux/of_device.h>
@@ -13,6 +15,7 @@
 #include <linux/remoteproc.h>
 #include <linux/reset.h>
 #include <linux/regmap.h>
+#include <linux/workqueue.h>
 
 #include "remoteproc_internal.h"
 
@@ -22,10 +25,15 @@
 #define CV1800B_SYS_C906L_BOOTADDR_REG	0x20
 
 struct cv1800b_c906l {
+	struct rproc *rproc;
 	struct reset_control *reset;
 	struct regmap *syscon;
 	struct clk_bulk_data *clks;
 	int num_clks;
+	struct mbox_client cl;
+	struct mbox_chan *tx_ch;
+	struct mbox_chan *rx_ch;
+	struct work_struct rx_work;
 };
 
 static int cv1800b_c906l_add_carveout(struct rproc *rproc)
@@ -106,16 +114,100 @@ static int cv1800b_c906l_parse_fw(struct rproc *rproc, const struct firmware *fw
 	return 0;
 }
 
+static void cv1800b_c906l_kick(struct rproc *rproc, int vqid)
+{
+	struct cv1800b_c906l *priv = rproc->priv;
+	u64 msg = vqid;
+	int ret;
+
+	if (!priv->tx_ch) {
+		dev_warn_once(&rproc->dev, "no mailbox, cannot kick vq %d\n",
+			      vqid);
+		return;
+	}
+
+	ret = mbox_send_message(priv->tx_ch, &msg);
+	if (ret < 0)
+		dev_err(&rproc->dev, "failed to kick vq %d: %d\n", vqid, ret);
+}
+
 static const struct rproc_ops cv1800b_c906l_ops = {
 	.prepare = cv1800b_c906l_prepare,
 	.start = cv1800b_c906l_start,
 	.stop = cv1800b_c906l_stop,
+	.kick = cv1800b_c906l_kick,
 	.load = rproc_elf_load_segments,
 	.parse_fw = cv1800b_c906l_parse_fw,
 	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
 	.sanity_check = rproc_elf_sanity_check,
 	.get_boot_addr = rproc_elf_get_boot_addr,
 };
+
+static int cv1800b_c906l_vq_notify(int id, void *p, void *data)
+{
+	rproc_vq_interrupt(data, id);
+
+	return 0;
+}
+
+static void cv1800b_c906l_mbox_rx_work(struct work_struct *work)
+{
+	struct cv1800b_c906l *priv = container_of(work, struct cv1800b_c906l,
+						  rx_work);
+
+	idr_for_each(&priv->rproc->notifyids, cv1800b_c906l_vq_notify,
+		     priv->rproc);
+}
+
+static void cv1800b_c906l_mbox_rx_callback(struct mbox_client *cl, void *msg)
+{
+	struct cv1800b_c906l *priv = container_of(cl, struct cv1800b_c906l, cl);
+
+	schedule_work(&priv->rx_work);
+}
+
+static void cv1800b_c906l_free_mbox(void *data)
+{
+	struct cv1800b_c906l *priv = data;
+
+	mbox_free_channel(priv->rx_ch);
+	mbox_free_channel(priv->tx_ch);
+}
+
+static int cv1800b_c906l_mbox_init(struct device *dev,
+				   struct cv1800b_c906l *priv)
+{
+	struct mbox_client *cl = &priv->cl;
+	int ret;
+
+	if (!of_property_present(dev->of_node, "mboxes"))
+		return 0;
+
+	ret = devm_work_autocancel(dev, &priv->rx_work,
+				   cv1800b_c906l_mbox_rx_work);
+	if (ret)
+		return ret;
+
+	cl->dev = dev;
+	cl->rx_callback = cv1800b_c906l_mbox_rx_callback;
+	cl->tx_block = true;
+	cl->tx_tout = 50;
+	cl->knows_txdone = false;
+
+	priv->tx_ch = mbox_request_channel_byname(cl, "tx");
+	if (IS_ERR(priv->tx_ch))
+		return dev_err_probe(dev, PTR_ERR(priv->tx_ch),
+				     "failed to request tx mailbox channel\n");
+
+	priv->rx_ch = mbox_request_channel_byname(cl, "rx");
+	if (IS_ERR(priv->rx_ch)) {
+		mbox_free_channel(priv->tx_ch);
+		return dev_err_probe(dev, PTR_ERR(priv->rx_ch),
+				     "failed to request rx mailbox channel\n");
+	}
+
+	return devm_add_action_or_reset(dev, cv1800b_c906l_free_mbox, priv);
+}
 
 static int cv1800b_c906l_mem_init(struct device *dev)
 {
@@ -156,6 +248,7 @@ static int cv1800b_c906l_probe(struct platform_device *pdev)
 		return -ENOMEM;
 
 	priv = rproc->priv;
+	priv->rproc = rproc;
 
 	ret = cv1800b_c906l_mem_init(dev);
 	if (ret)
@@ -178,6 +271,10 @@ static int cv1800b_c906l_probe(struct platform_device *pdev)
 	if (IS_ERR(priv->reset))
 		return dev_err_probe(dev, PTR_ERR(priv->reset),
 				     "failed to get reset control handle\n");
+
+	ret = cv1800b_c906l_mbox_init(dev, priv);
+	if (ret)
+		return ret;
 
 	platform_set_drvdata(pdev, rproc);
 

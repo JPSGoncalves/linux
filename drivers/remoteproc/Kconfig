@@ -315,6 +315,7 @@ config SOPHGO_CV1800B_C906L
 	tristate "Sophgo CV1800B C906L remoteproc support"
 	depends on ARCH_SOPHGO || COMPILE_TEST
 	select MFD_SYSCON
+	select MAILBOX
 	help
 	  Say y here to support CV18xx/SG200X C906L remote processor via the
 	  remote processor framework.

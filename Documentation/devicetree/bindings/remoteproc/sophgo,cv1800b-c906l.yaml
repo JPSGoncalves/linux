@@ -21,7 +21,10 @@ properties:
     const: sophgo,cv1800b-c906l
 
   clocks:
-    maxItems: 1
+    items:
+      - description: C906L core clock
+      - description: eFuse clock, required for SEC_SYS register access
+      - description: eFuse APB clock, required for SEC_SYS register access
 
   firmware-name:
     maxItems: 1
@@ -40,15 +43,10 @@ properties:
 
   memory-region:
     description:
-      Reserved memory regions used by the C906L. The firmware region is always
-      required. The virtio regions are required only when RPMsg/virtio
-      communication is used.
-    minItems: 1
+      Reserved memory regions used by the C906L.
     items:
-      - description: Firmware region
-      - description: Virtio device buffer
-      - description: Virtio ring 0
-      - description: Virtio ring 1
+      - description: DMA pool used for the vrings and virtio buffers.
+      - description: Firmware region.
 
   resets:
     maxItems: 1
@@ -75,14 +73,30 @@ examples:
   - |
     #include <dt-bindings/clock/sophgo,cv1800.h>
 
+    reserved-memory {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        ranges;
+
+        c906l_dma: memory@9fd00000 {
+            compatible = "shared-dma-pool";
+            reg = <0x9fd00000 0x100000>;
+            no-map;
+        };
+
+        c906l_fw: memory@9fe00000 {
+            reg = <0x9fe00000 0x200000>;
+            no-map;
+        };
+    };
+
     remoteproc {
         compatible = "sophgo,cv1800b-c906l";
-        clocks = <&clk CLK_C906_1>;
+        clocks = <&clk CLK_C906_1>, <&clk CLK_EFUSE>, <&clk CLK_APB_EFUSE>;
         firmware-name = "c906l-fw.elf";
         mboxes = <&mbox 0 2>, <&mbox 1 1>;
         mbox-names = "tx", "rx";
-        memory-region = <&c906l_fw>, <&vdev0buffer>,
-                        <&vdev0vring0>, <&vdev0vring1>;
+        memory-region = <&c906l_dma>, <&c906l_fw>;
         resets = <&rst 294>; /* RST_CPUSYS2 */
         sophgo,sec-syscon = <&sec_sys>;
     };

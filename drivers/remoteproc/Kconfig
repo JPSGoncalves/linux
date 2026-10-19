@@ -314,9 +314,10 @@ config RCAR_REMOTEPROC
 config SOPHGO_CV1800B_C906L
 	tristate "Sophgo CV1800B C906L remoteproc support"
 	depends on ARCH_SOPHGO || COMPILE_TEST
+	select MFD_SYSCON
 	help
-	  Say y here to support CV1800B C906L remote processor via the remote
-	  processor framework.
+	  Say y here to support CV18xx/SG200X C906L remote processor via the
+	  remote processor framework.
 
 	  It's safe to say N here.
 

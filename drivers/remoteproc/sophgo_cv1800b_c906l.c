@@ -4,6 +4,7 @@
  */
 
 #include <linux/bits.h>
+#include <linux/clk.h>
 #include <linux/mfd/syscon.h>
 #include <linux/module.h>
 #include <linux/of_device.h>
@@ -20,102 +21,43 @@
 
 #define CV1800B_SYS_C906L_BOOTADDR_REG	0x20
 
-/**
- * struct cv1800b_c906l - C906L remoteproc structure
- * @dev: private pointer to the device
- * @reset: reset control handle
- * @rproc: the remote processor handle
- * @syscon: regmap for accessing security system registers
- */
 struct cv1800b_c906l {
-	struct device *dev;
 	struct reset_control *reset;
-	struct rproc *rproc;
 	struct regmap *syscon;
+	struct clk_bulk_data *clks;
+	int num_clks;
 };
-
-static int cv1800b_c906l_mem_alloc(struct rproc *rproc,
-				   struct rproc_mem_entry *mem)
-{
-	void __iomem *va;
-
-	va = ioremap_wc(mem->dma, mem->len);
-	if (!va)
-		return -ENOMEM;
-
-	/* Update memory entry va */
-	mem->va = (void *)va;
-
-	return 0;
-}
-
-static int cv1800b_c906l_mem_release(struct rproc *rproc,
-				     struct rproc_mem_entry *mem)
-{
-	iounmap((void __iomem *)mem->va);
-	return 0;
-}
 
 static int cv1800b_c906l_add_carveout(struct rproc *rproc)
 {
 	struct device *dev = rproc->dev.parent;
 	struct device_node *np = dev->of_node;
-	struct of_phandle_iterator it;
 	struct rproc_mem_entry *mem;
-	struct reserved_mem *rmem;
-	int i = 0;
+	struct resource res;
+	int ret;
 
-	/* Register associated reserved memory regions */
-	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-	while (of_phandle_iterator_next(&it) == 0) {
-		rmem = of_reserved_mem_lookup(it.node);
-		if (!rmem) {
-			of_node_put(it.node);
-			return -EINVAL;
-		}
+	/* Second memory-region is the firmware region */
+	ret = of_reserved_mem_region_to_resource(np, 1, &res);
+	if (ret)
+		return ret;
 
-		if (!strcmp(it.node->name, "vdev0buffer")) {
-			mem = rproc_of_resm_mem_entry_init(&rproc->dev, i,
-							   rmem->size,
-							   rmem->base,
-							   it.node->name);
-		} else {
-			mem = rproc_mem_entry_init(dev, NULL, (dma_addr_t)rmem->base,
-						   rmem->size, rmem->base,
-						   cv1800b_c906l_mem_alloc,
-						   cv1800b_c906l_mem_release,
-						   it.node->name);
-		}
+	mem = rproc_mem_entry_init(dev, NULL,
+				   (dma_addr_t)res.start,
+				   resource_size(&res), res.start,
+				   rproc_mem_entry_ioremap_wc,
+				   rproc_mem_entry_iounmap,
+				   "firmware");
+	if (!mem)
+		return -ENOMEM;
 
-		if (!mem) {
-			of_node_put(it.node);
-			return -ENOMEM;
-		}
-
-		rproc_add_carveout(rproc, mem);
-		i++;
-	}
+	rproc_add_carveout(rproc, mem);
 
 	return 0;
 }
 
 static int cv1800b_c906l_prepare(struct rproc *rproc)
 {
-	struct cv1800b_c906l *priv = rproc->priv;
-	int ret;
-
-	ret = cv1800b_c906l_add_carveout(rproc);
-	if (ret)
-		return ret;
-
-	/*
-	 * This control bit must be set to enable the C906L remote processor.
-	 * Note that once the remote processor is running, merely clearing
-	 * this bit will not stop its execution.
-	 */
-	return regmap_update_bits(priv->syscon, CV1800B_SYS_C906L_CTRL_REG,
-				  CV1800B_SYS_C906L_CTRL_EN,
-				  CV1800B_SYS_C906L_CTRL_EN);
+	return cv1800b_c906l_add_carveout(rproc);
 }
 
 static int cv1800b_c906l_start(struct rproc *rproc)
@@ -126,6 +68,21 @@ static int cv1800b_c906l_start(struct rproc *rproc)
 
 	bootaddr[0] = lower_32_bits(rproc->bootaddr);
 	bootaddr[1] = upper_32_bits(rproc->bootaddr);
+
+	ret = reset_control_assert(priv->reset);
+	if (ret)
+		return ret;
+
+	/*
+	 * This control bit must be set to enable the C906L remote processor.
+	 * Note that once the remote processor is running, merely clearing
+	 * this bit will not stop its execution.
+	 */
+	ret = regmap_update_bits(priv->syscon, CV1800B_SYS_C906L_CTRL_REG,
+				  CV1800B_SYS_C906L_CTRL_EN,
+				  CV1800B_SYS_C906L_CTRL_EN);
+	if (ret)
+		return ret;
 
 	ret = regmap_bulk_write(priv->syscon, CV1800B_SYS_C906L_BOOTADDR_REG,
 				bootaddr, ARRAY_SIZE(bootaddr));
@@ -142,18 +99,11 @@ static int cv1800b_c906l_stop(struct rproc *rproc)
 	return reset_control_assert(priv->reset);
 }
 
-static int cv1800b_c906l_parse_fw(struct rproc *rproc,
-				  const struct firmware *fw)
+static int cv1800b_c906l_parse_fw(struct rproc *rproc, const struct firmware *fw)
 {
-	int ret;
-
-	ret = rproc_elf_load_rsc_table(rproc, fw);
-	if (ret == -EINVAL) {
-		dev_info(&rproc->dev, "No resource table in elf\n");
-		ret = 0;
-	}
-
-	return ret;
+	rproc_elf_load_rsc_table_optional(rproc, fw, dev_info,
+					  "no resource table in elf\n");
+	return 0;
 }
 
 static const struct rproc_ops cv1800b_c906l_ops = {
@@ -167,34 +117,62 @@ static const struct rproc_ops cv1800b_c906l_ops = {
 	.get_boot_addr = rproc_elf_get_boot_addr,
 };
 
+static int cv1800b_c906l_mem_init(struct device *dev)
+{
+	int count;
+
+	count = of_reserved_mem_region_count(dev->of_node);
+	if (count < 0)
+		return count;
+
+	if (count != 2)
+		return -EINVAL;
+
+	/*
+	 * The DMA pool is the first memory-region. Assign it to this device so
+	 * the vrings are allocated from it. The virtio buffers come from the
+	 * same pool, through the core's fallback to the parent's first
+	 * memory-region.
+	 */
+	return devm_of_reserved_mem_device_init(dev);
+}
+
 static int cv1800b_c906l_probe(struct platform_device *pdev)
 {
 	struct device *dev = &pdev->dev;
 	struct device_node *np = dev->of_node;
 	struct cv1800b_c906l *priv;
+	const char *fw_name = NULL;
 	struct rproc *rproc;
-	const char *fw_name;
 	int ret;
 
 	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
-	if (ret)
-		return dev_err_probe(dev, ret, "No firmware filename given\n");
+	if (ret && ret != -EINVAL)
+		return dev_err_probe(dev, ret, "failed to get firmware filename\n");
 
 	rproc = devm_rproc_alloc(dev, dev_name(dev), &cv1800b_c906l_ops,
 				 fw_name, sizeof(*priv));
 	if (!rproc)
-		return dev_err_probe(dev, -ENOMEM,
-				     "unable to allocate remoteproc\n");
-
-	rproc->has_iommu = false;
+		return -ENOMEM;
 
 	priv = rproc->priv;
-	priv->dev = dev;
-	priv->rproc = rproc;
 
-	priv->syscon = syscon_regmap_lookup_by_phandle(np, "sophgo,syscon");
+	ret = cv1800b_c906l_mem_init(dev);
+	if (ret)
+		return dev_err_probe(dev, ret,
+				     "failed to init reserved memory regions\n");
+
+	priv->num_clks = devm_clk_bulk_get_all_enabled(dev, &priv->clks);
+	if (priv->num_clks < 0)
+		return dev_err_probe(dev, priv->num_clks,
+				     "failed to get clocks\n");
+	if (!priv->num_clks)
+		return dev_err_probe(dev, -ENOENT, "no clocks found\n");
+
+	priv->syscon = syscon_regmap_lookup_by_phandle(np, "sophgo,sec-syscon");
 	if (IS_ERR(priv->syscon))
-		return PTR_ERR(priv->syscon);
+		return dev_err_probe(dev, PTR_ERR(priv->syscon),
+				     "failed to get system controller\n");
 
 	priv->reset = devm_reset_control_get_exclusive(dev, NULL);
 	if (IS_ERR(priv->reset))
@@ -208,13 +186,7 @@ static int cv1800b_c906l_probe(struct platform_device *pdev)
 		return dev_err_probe(dev, ret, "rproc_add failed\n");
 
 	return 0;
-}
 
-static void cv1800b_c906l_remove(struct platform_device *pdev)
-{
-	struct rproc *rproc = platform_get_drvdata(pdev);
-
-	rproc_del(rproc);
 }
 
 static const struct of_device_id cv1800b_c906l_of_match[] = {
@@ -225,7 +197,6 @@ MODULE_DEVICE_TABLE(of, cv1800b_c906l_of_match);
 
 static struct platform_driver cv1800b_c906l_driver = {
 	.probe = cv1800b_c906l_probe,
-	.remove = cv1800b_c906l_remove,
 	.driver = {
 		.name = "cv1800b-c906l",
 		.of_match_table = cv1800b_c906l_of_match,

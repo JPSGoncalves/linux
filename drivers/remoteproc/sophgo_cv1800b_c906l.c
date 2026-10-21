@@ -46,6 +46,8 @@ struct cv1800b_c906l {
 	struct mbox_chan *tx_ch;
 	struct mbox_chan *rx_ch;
 	struct work_struct rx_work;
+	void __iomem *rsc_table;
+	size_t rsc_table_sz;
 };
 
 static int cv1800b_c906l_add_carveout(struct rproc *rproc)
@@ -137,6 +139,60 @@ static int cv1800b_c906l_stop(struct rproc *rproc)
 	return reset_control_assert(priv->reset);
 }
 
+static int cv1800b_c906l_attach(struct rproc *rproc)
+{
+	/* The C906L was started by the bootloader, nothing to do */
+	C906L_IPC_DBG(&rproc->dev, "");
+	return 0;
+}
+
+static struct resource_table *
+cv1800b_c906l_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
+{
+	struct cv1800b_c906l *priv = rproc->priv;
+	struct resource_table *table;
+
+	if (!priv->rsc_table)
+		return NULL;
+
+	C906L_IPC_DBG(&rproc->dev, "");
+	table = (struct resource_table __force *)priv->rsc_table;
+
+	/*
+	 * The firmware copies its resource table here when it boots. Treat
+	 * anything that does not look like one as no resource table at all.
+	 */
+	if (table->ver != 1 ||
+	    struct_size(table, offset, table->num) > priv->rsc_table_sz) {
+		dev_warn(&rproc->dev, "invalid resource table, ignoring it\n");
+		return NULL;
+	}
+
+	*table_sz = priv->rsc_table_sz;
+
+	return table;
+}
+
+static struct resource_table *
+cv1800b_c906l_find_loaded_rsc_table(struct rproc *rproc,
+				    const struct firmware *fw)
+{
+	struct cv1800b_c906l *priv = rproc->priv;
+
+	/* No resource table in the firmware */
+	if (!rproc->table_ptr)
+		return NULL;
+
+	/*
+	 * Use the shared resource table region, so the same table is used
+	 * whether Linux or the bootloader started the C906L.
+	 */
+	if (priv->rsc_table)
+		return (struct resource_table __force *)priv->rsc_table;
+
+	return rproc_elf_find_loaded_rsc_table(rproc, fw);
+}
+
 static int cv1800b_c906l_parse_fw(struct rproc *rproc, const struct firmware *fw)
 {
 	rproc_elf_load_rsc_table_optional(rproc, fw, dev_info,
@@ -179,10 +235,12 @@ static const struct rproc_ops cv1800b_c906l_ops = {
 	.prepare = cv1800b_c906l_prepare,
 	.start = cv1800b_c906l_start,
 	.stop = cv1800b_c906l_stop,
+	.attach = cv1800b_c906l_attach,
 	.kick = cv1800b_c906l_kick,
 	.load = cv1800b_c906l_load,
 	.parse_fw = cv1800b_c906l_parse_fw,
-	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+	.find_loaded_rsc_table = cv1800b_c906l_find_loaded_rsc_table,
+	.get_loaded_rsc_table = cv1800b_c906l_get_loaded_rsc_table,
 	.sanity_check = rproc_elf_sanity_check,
 	.get_boot_addr = rproc_elf_get_boot_addr,
 };
@@ -264,15 +322,18 @@ static int cv1800b_c906l_mbox_init(struct device *dev,
 	return devm_add_action_or_reset(dev, cv1800b_c906l_free_mbox, priv);
 }
 
-static int cv1800b_c906l_mem_init(struct device *dev)
+static int cv1800b_c906l_mem_init(struct device *dev,
+				  struct cv1800b_c906l *priv)
 {
+	struct resource res;
 	int count;
+	int ret;
 
 	count = of_reserved_mem_region_count(dev->of_node);
 	if (count < 0)
 		return count;
 
-	if (count != 2)
+	if (count != 2 && count != 3)
 		return -EINVAL;
 
 	/*
@@ -281,7 +342,41 @@ static int cv1800b_c906l_mem_init(struct device *dev)
 	 * same pool, through the core's fallback to the parent's first
 	 * memory-region.
 	 */
-	return devm_of_reserved_mem_device_init(dev);
+	ret = devm_of_reserved_mem_device_init(dev);
+	if (ret)
+		return ret;
+
+	/* The optional third memory-region is the resource table region */
+	if (count < 3)
+		return 0;
+
+	ret = of_reserved_mem_region_to_resource(dev->of_node, 2, &res);
+	if (ret)
+		return ret;
+
+	priv->rsc_table = devm_ioremap_resource_wc(dev, &res);
+	if (IS_ERR(priv->rsc_table))
+		return PTR_ERR(priv->rsc_table);
+
+	priv->rsc_table_sz = resource_size(&res);
+
+	return 0;
+}
+
+static bool cv1800b_c906l_is_running(struct cv1800b_c906l *priv)
+{
+	u32 ctrl;
+	int ret;
+
+	ret = reset_control_status(priv->reset);
+	if (ret)
+		return false;
+
+	ret = regmap_read(priv->syscon, CV1800B_SYS_C906L_CTRL_REG, &ctrl);
+	if (ret)
+		return false;
+
+	return ctrl & CV1800B_SYS_C906L_CTRL_EN;
 }
 
 static int cv1800b_c906l_probe(struct platform_device *pdev)
@@ -302,12 +397,10 @@ static int cv1800b_c906l_probe(struct platform_device *pdev)
 	if (!rproc)
 		return -ENOMEM;
 
-	rproc->auto_boot = false;
-
 	priv = rproc->priv;
 	priv->rproc = rproc;
 
-	ret = cv1800b_c906l_mem_init(dev);
+	ret = cv1800b_c906l_mem_init(dev, priv);
 	if (ret)
 		return dev_err_probe(dev, ret,
 				     "failed to init reserved memory regions\n");
@@ -334,6 +427,14 @@ static int cv1800b_c906l_probe(struct platform_device *pdev)
 	ret = cv1800b_c906l_mbox_init(dev, priv);
 	if (ret)
 		return ret;
+
+	if (cv1800b_c906l_is_running(priv)) {
+		dev_info(dev, "rproc already running, attaching\n");
+		rproc->state = RPROC_DETACHED;
+		rproc->auto_boot = true;
+	} else {
+		rproc->auto_boot = false;
+	}
 
 	C906L_DBG(dev);
 

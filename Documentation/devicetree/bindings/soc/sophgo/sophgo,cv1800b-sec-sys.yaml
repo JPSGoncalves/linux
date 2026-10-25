@@ -1,0 +1,53 @@
+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/soc/sophgo/sophgo,cv1800b-sec-sys.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+title: Sophgo CV18XX/SG200X SoC security subsystem system controller
+
+maintainers:
+  - João Paulo Gonçalves <jpaulo.silvagoncalves@gmail.com>
+
+description:
+  The Sophgo CV18XX/SG200X SoC security subsystem system controller (SEC_SYS) is
+  a block of miscellaneous control registers whose only known use is controlling
+  the C906L remote processor.
+
+properties:
+  compatible:
+    const: sophgo,cv1800b-sec-sys
+
+  reg:
+    maxItems: 1
+
+  clocks:
+    items:
+      - description: eFuse APB bus clock
+      - description: eFuse clock
+
+  clock-names:
+    items:
+      - const: apb
+      - const: efuse
+
+required:
+  - compatible
+  - reg
+  - clocks
+  - clock-names
+
+additionalProperties: false
+
+examples:
+  - |
+    #include <dt-bindings/clock/sophgo,cv1800.h>
+
+    syscon@20b0000 {
+      compatible = "sophgo,cv1800b-sec-sys";
+      reg = <0x020b0000 0x1000>;
+      clocks = <&clk CLK_APB_EFUSE>, <&clk CLK_EFUSE>;
+      clock-names = "apb", "efuse";
+    };
+
+...

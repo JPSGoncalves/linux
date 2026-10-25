@@ -25,6 +25,13 @@
 		#size-cells = <1>;
 		ranges;
 
+		sec_sys: syscon@20b0000 {
+			compatible = "sophgo,cv1800b-sec-sys";
+			reg = <0x020b0000 0x1000>;
+			clocks = <&clk CLK_EFUSE>, <&clk CLK_APB_EFUSE>;
+			clock-names = "efuse", "apb";
+		};
+
 		syscon: syscon@3000000 {
 			compatible = "sophgo,cv1800b-top-syscon",
 				     "syscon", "simple-mfd";

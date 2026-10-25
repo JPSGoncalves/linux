@@ -19,6 +19,14 @@ config SOPHGO_CV1800_RTCSYS
 	  This driver can also be built as a module. If so, the module will be
 	  called cv1800-rtcsys.
 
+config SOPHGO_CV1800_SECSYS
+	bool "Sophgo CV18xx/SG200x SEC_SYS syscon driver"
+	select MFD_SYSCON
+	help
+	  Support for the security subsystem system controller (SEC_SYS) of
+	  Sophgo CV18xx and SG200x SoCs, needed to control the C906L remote
+	  core.
+
 config SOPHGO_SG2044_TOPSYS
 	tristate "Sophgo SG2044 TOP syscon driver"
 	select MFD_CORE

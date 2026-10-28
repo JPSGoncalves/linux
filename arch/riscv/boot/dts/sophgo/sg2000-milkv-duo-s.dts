@@ -27,11 +27,6 @@
 		#size-cells = <1>;
 		ranges;
 
-		c906l_rsc: memory@9fcff000 {
-			reg = <0x9fcff000 0x1000>;
-			no-map;
-		};
-
 		c906l_dma: memory@9fd00000 {
 			compatible = "shared-dma-pool";
 			reg = <0x9fd00000 0x100000>;
@@ -189,7 +184,7 @@
 
 &c906l {
 	clocks = <&clk CLK_C906_1>, <&clk CLK_EFUSE>, <&clk CLK_APB_EFUSE>;
-	memory-region = <&c906l_dma>, <&c906l_fw>, <&c906l_rsc>;
+	memory-region = <&c906l_dma>, <&c906l_fw>;
 	mboxes = <&mailbox 0 2>, <&mailbox 1 1>;
 	mbox-names = "tx", "rx";
 	status = "okay";

@@ -16,6 +16,7 @@
 #include <linux/remoteproc.h>
 #include <linux/reset.h>
 #include <linux/regmap.h>
+#include <linux/sizes.h>
 #include <linux/workqueue.h>
 
 #include "remoteproc_internal.h"
@@ -24,6 +25,9 @@
 #define CV1800B_SYS_C906L_CTRL_EN	BIT(13)
 
 #define CV1800B_SYS_C906L_BOOTADDR_REG	0x20
+
+/* The firmware links its resource table at the start of the firmware region */
+#define CV1800B_C906L_RSC_TABLE_SZ	SZ_4K
 
 /* XXX debug: the delay lets the line reach the console before a hang */
 #define C906L_DBG(dev)						\
@@ -47,7 +51,6 @@ struct cv1800b_c906l {
 	struct mbox_chan *rx_ch;
 	struct work_struct rx_work;
 	void __iomem *rsc_table;
-	size_t rsc_table_sz;
 };
 
 static int cv1800b_c906l_add_carveout(struct rproc *rproc)
@@ -152,45 +155,19 @@ cv1800b_c906l_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
 	struct cv1800b_c906l *priv = rproc->priv;
 	struct resource_table *table;
 
-	if (!priv->rsc_table)
-		return NULL;
-
 	C906L_IPC_DBG(&rproc->dev, "");
 	table = (struct resource_table __force *)priv->rsc_table;
 
-	/*
-	 * The firmware copies its resource table here when it boots. Treat
-	 * anything that does not look like one as no resource table at all.
-	 */
+	/* Treat anything that does not look like one as no resource table */
 	if (table->ver != 1 ||
-	    struct_size(table, offset, table->num) > priv->rsc_table_sz) {
+	    struct_size(table, offset, table->num) > CV1800B_C906L_RSC_TABLE_SZ) {
 		dev_warn(&rproc->dev, "invalid resource table, ignoring it\n");
 		return NULL;
 	}
 
-	*table_sz = priv->rsc_table_sz;
+	*table_sz = CV1800B_C906L_RSC_TABLE_SZ;
 
 	return table;
-}
-
-static struct resource_table *
-cv1800b_c906l_find_loaded_rsc_table(struct rproc *rproc,
-				    const struct firmware *fw)
-{
-	struct cv1800b_c906l *priv = rproc->priv;
-
-	/* No resource table in the firmware */
-	if (!rproc->table_ptr)
-		return NULL;
-
-	/*
-	 * Use the shared resource table region, so the same table is used
-	 * whether Linux or the bootloader started the C906L.
-	 */
-	if (priv->rsc_table)
-		return (struct resource_table __force *)priv->rsc_table;
-
-	return rproc_elf_find_loaded_rsc_table(rproc, fw);
 }
 
 static int cv1800b_c906l_parse_fw(struct rproc *rproc, const struct firmware *fw)
@@ -239,7 +216,7 @@ static const struct rproc_ops cv1800b_c906l_ops = {
 	.kick = cv1800b_c906l_kick,
 	.load = cv1800b_c906l_load,
 	.parse_fw = cv1800b_c906l_parse_fw,
-	.find_loaded_rsc_table = cv1800b_c906l_find_loaded_rsc_table,
+	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
 	.get_loaded_rsc_table = cv1800b_c906l_get_loaded_rsc_table,
 	.sanity_check = rproc_elf_sanity_check,
 	.get_boot_addr = rproc_elf_get_boot_addr,
@@ -333,7 +310,7 @@ static int cv1800b_c906l_mem_init(struct device *dev,
 	if (count < 0)
 		return count;
 
-	if (count != 2 && count != 3)
+	if (count != 2)
 		return -EINVAL;
 
 	/*
@@ -346,19 +323,18 @@ static int cv1800b_c906l_mem_init(struct device *dev,
 	if (ret)
 		return ret;
 
-	/* The optional third memory-region is the resource table region */
-	if (count < 3)
-		return 0;
-
-	ret = of_reserved_mem_region_to_resource(dev->of_node, 2, &res);
+	/*
+	 * Map the resource table at the start of the firmware region. Not a
+	 * requested resource, since it overlaps the firmware carveout.
+	 */
+	ret = of_reserved_mem_region_to_resource(dev->of_node, 1, &res);
 	if (ret)
 		return ret;
 
-	priv->rsc_table = devm_ioremap_resource_wc(dev, &res);
-	if (IS_ERR(priv->rsc_table))
-		return PTR_ERR(priv->rsc_table);
-
-	priv->rsc_table_sz = resource_size(&res);
+	priv->rsc_table = devm_ioremap_wc(dev, res.start,
+					  CV1800B_C906L_RSC_TABLE_SZ);
+	if (!priv->rsc_table)
+		return -ENOMEM;
 
 	return 0;
 }
